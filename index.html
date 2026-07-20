@@ -1,1555 +1,2012 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proje Fikri Bulucu</title>
-<style>
-  :root{
-    --bg:#0d1117;
-    --bg-alt:#11161d;
-    --surface:#161b22;
-    --surface-hover:#1c2330;
-    --border:#262d38;
-    --text:#e6edf3;
-    --text-dim:#8b949e;
-    --accent:#7c5cff;
-    --accent-2:#22d3ee;
-    --accent-3:#f472b6;
-    --green:#3fb950;
-    --yellow:#e3b341;
-    --red:#f85149;
-    --radius:16px;
-    --shadow: 0 10px 30px rgba(0,0,0,.35);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proje Fikri Bulucu</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-alt: #11161d;
+      --surface: #161b22;
+      --surface-hover: #1c2330;
+      --border: #262d38;
+      --text: #e6edf3;
+      --text-dim: #8b949e;
+      --accent: #7c5cff;
+      --accent-2: #22d3ee;
+      --accent-3: #f472b6;
+      --green: #3fb950;
+      --yellow: #e3b341;
+      --red: #f85149;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    }
 
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    min-height:100vh;
-    background:
-      radial-gradient(1000px 500px at 10% -10%, rgba(124,92,255,.18), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, rgba(34,211,238,.12), transparent 60%),
-      var(--bg);
-    color:var(--text);
-    font-family: "Segoe UI", Inter, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
-    padding:32px 20px 80px;
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  .wrap{max-width:1180px;margin:0 auto;}
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-  header{
-    text-align:center;
-    margin-bottom:24px;
-  }
-  header h1{
-    font-size:2.4rem;
-    margin:0 0 8px;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    letter-spacing:-0.5px;
-  }
-  header p{
-    color:var(--text-dim);
-    margin:0;
-    font-size:1.02rem;
-  }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(1000px 500px at 10% -10%, rgba(124, 92, 255, .18), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(34, 211, 238, .12), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Inter, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+      padding: 32px 20px 80px;
+    }
 
-  /* Top-right floating "add idea" button */
-  .top-actions{
-    position:fixed;
-    top:22px;
-    right:22px;
-    z-index:60;
-  }
-  #addIdeaBtn{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    color:var(--text);
-    padding:11px 18px;
-    border-radius:999px;
-    cursor:pointer;
-    font-weight:600;
-    font-size:.86rem;
-    box-shadow:var(--shadow);
-    transition:all .15s ease;
-  }
-  #addIdeaBtn:hover{
-    border-color:var(--accent-2);
-    color:var(--accent-2);
-    transform:translateY(-2px);
-    box-shadow:0 14px 30px rgba(34,211,238,.2);
-  }
-  #addIdeaBtn .plus{
-    font-size:1.15rem;
-    line-height:1;
-    font-weight:700;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-  }
-  @media (max-width:640px){
-    #addIdeaBtn span.label{display:none;}
-    #addIdeaBtn{padding:12px;}
-    .top-actions{top:16px;right:16px;}
-  }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
 
-  /* Google hesap girişi */
-  .auth-section{
-    max-width:420px;
-    margin:0 auto 14px;
-  }
-  .auth-btn{
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    color:var(--text);
-    padding:12px 16px;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:600;
-    font-size:.88rem;
-    transition:all .15s ease;
-  }
-  .auth-btn:hover{border-color:var(--accent);color:var(--accent-2);box-shadow:0 10px 22px rgba(124,92,255,.15);}
-  .auth-profile{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:9px 14px;
-  }
-  .auth-profile .who{display:flex;align-items:center;gap:10px;min-width:0;}
-  .auth-profile .avatar{
-    width:32px;height:32px;border-radius:50%;
-    border:1px solid var(--border);
-    flex:0 0 auto;
-    object-fit:cover;
-  }
-  .auth-profile .avatar.fallback{
-    display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    color:#0b0d12;font-weight:800;font-size:.9rem;
-  }
-  .auth-profile .name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
-  .auth-profile .sync-status{font-size:.72rem;color:var(--text-dim);}
-  .auth-profile .sync-status.syncing{color:var(--accent-2);}
-  .auth-profile .sync-status.synced{color:var(--green);}
-  .auth-profile .sync-status.error{color:var(--red);}
-  .auth-profile .signout-btn{
-    background:var(--bg-alt);
-    border:1px solid var(--border);
-    color:var(--text-dim);
-    padding:7px 14px;
-    border-radius:9px;
-    cursor:pointer;
-    font-size:.8rem;
-    font-weight:600;
-    flex:0 0 auto;
-  }
-  .auth-profile .signout-btn:hover{color:var(--red);border-color:rgba(248,81,73,.4);}
-  .auth-error{
-    text-align:center;
-    font-size:.78rem;
-    color:var(--red);
-    margin-top:8px;
-    min-height:16px;
-  }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
 
-  /* API key settings */
-  .api-settings{
-    max-width:560px;
-    margin:0 auto 22px;
-  }
-  .api-toggle{
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:9px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    color:var(--text-dim);
-    padding:11px 16px;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:.85rem;
-    font-weight:600;
-    transition:all .15s ease;
-  }
-  .api-toggle:hover{color:var(--text);border-color:var(--accent-2);}
-  .api-toggle .dot{
-    width:8px;height:8px;border-radius:50%;
-    background:var(--red);
-    box-shadow:0 0 8px rgba(248,81,73,.6);
-    flex:0 0 auto;
-  }
-  .api-toggle.connected .dot{background:var(--green);box-shadow:0 0 8px rgba(63,185,80,.6);}
-  .api-panel{
-    max-height:0;
-    overflow:hidden;
-    transition:max-height .3s ease;
-  }
-  .api-panel.open{max-height:260px;}
-  .api-panel-inner{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-top:none;
-    border-radius:0 0 14px 14px;
-    padding:18px;
-  }
-  .api-input-row{position:relative;}
-  .api-input-row input{
-    width:100%;
-    padding:11px 46px 11px 14px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background:var(--bg-alt);
-    color:var(--text);
-    font-size:.85rem;
-    outline:none;
-    font-family:monospace;
-  }
-  .api-input-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.15);}
-  .api-input-row button{
-    position:absolute;
-    right:8px;
-    top:50%;
-    transform:translateY(-50%);
-    background:none;
-    border:none;
-    color:var(--text-dim);
-    cursor:pointer;
-    font-size:1rem;
-    padding:4px 6px;
-  }
-  .api-input-row button:hover{color:var(--text);}
-  .api-hint{font-size:.74rem;color:var(--text-dim);margin-top:9px;line-height:1.55;}
-  .api-hint a{color:var(--accent-2);}
-  .api-saved{font-size:.75rem;color:var(--green);margin-top:6px;height:16px;opacity:0;transition:opacity .3s ease;}
-  .api-saved.show{opacity:1;}
+    header h1 {
+      font-size: 2.4rem;
+      margin: 0 0 8px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
 
-  .random-bar{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:14px;
-    margin:28px 0 6px;
-  }
-  #randomBtn{
-    position:relative;
-    overflow:hidden;
-    cursor:pointer;
-    border:none;
-    color:#0b0d12;
-    font-weight:700;
-    font-size:1.05rem;
-    padding:16px 34px;
-    border-radius:999px;
-    background:linear-gradient(90deg,var(--accent-2),var(--accent),var(--accent-3));
-    background-size:200% 100%;
-    box-shadow:0 12px 30px rgba(124,92,255,.35);
-    transition:transform .15s ease, box-shadow .15s ease, background-position .6s ease;
-  }
-  #randomBtn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 16px 36px rgba(124,92,255,.45);
-    background-position:100% 0;
-  }
-  #randomBtn:active{transform:translateY(0px) scale(.98);}
+    header p {
+      color: var(--text-dim);
+      margin: 0;
+      font-size: 1.02rem;
+    }
 
-  #aiBtn{
-    position:relative;
-    overflow:hidden;
-    cursor:pointer;
-    border:1px solid rgba(124,92,255,.5);
-    color:var(--text);
-    font-weight:700;
-    font-size:1.02rem;
-    padding:15px 30px;
-    border-radius:999px;
-    background:linear-gradient(135deg, rgba(124,92,255,.28), rgba(34,211,238,.22), rgba(244,114,182,.28));
-    box-shadow:0 10px 26px rgba(124,92,255,.22);
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
-  #aiBtn::before{
-    content:"";
-    position:absolute;
-    top:0;left:-60%;
-    width:50%;height:100%;
-    background:linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent);
-    transform:skewX(-20deg);
-    animation:shimmerSweep 2.6s ease-in-out infinite;
-  }
-  @keyframes shimmerSweep{
-    0%{left:-60%;}
-    55%{left:120%;}
-    100%{left:120%;}
-  }
-  #aiBtn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(124,92,255,.32);}
-  #aiBtn:active{transform:translateY(0) scale(.98);}
-  #aiBtn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
-  #aiBtn:disabled::before{display:none;}
+    /* Top-right floating "add idea" button */
+    .top-actions {
+      position: fixed;
+      top: 22px;
+      right: 22px;
+      z-index: 60;
+    }
 
-  .spinner{
-    display:inline-block;
-    width:14px;height:14px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,.35);
-    border-top-color:#fff;
-    animation:spin .7s linear infinite;
-    vertical-align:middle;
-    margin-right:7px;
-  }
-  @keyframes spin{to{transform:rotate(360deg);}}
+    #addIdeaBtn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 11px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .86rem;
+      box-shadow: var(--shadow);
+      transition: all .15s ease;
+    }
 
-  .ai-status{
-    text-align:center;
-    font-size:.85rem;
-    margin:14px 0 8px;
-    min-height:18px;
-    transition:color .2s ease;
-  }
-  .ai-status.error{color:var(--red);}
-  .ai-status.info{color:var(--text-dim);}
-  .ai-status.success{color:var(--green);}
+    #addIdeaBtn:hover {
+      border-color: var(--accent-2);
+      color: var(--accent-2);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(34, 211, 238, .2);
+    }
 
-  .spotlight{
-    max-width:720px;
-    margin:20px auto 40px;
-    display:none;
-  }
-  .spotlight.show{display:block;}
+    #addIdeaBtn .plus {
+      font-size: 1.15rem;
+      line-height: 1;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
 
-  /* Görünüm anahtarı: Tüm Fikirler / Kütüphanem */
-  .view-toggle{
-    display:flex;
-    gap:6px;
-    max-width:420px;
-    margin:0 auto 18px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:999px;
-    padding:5px;
-  }
-  .view-toggle button{
-    flex:1;
-    background:none;
-    border:none;
-    color:var(--text-dim);
-    padding:9px 14px;
-    border-radius:999px;
-    cursor:pointer;
-    font-size:.83rem;
-    font-weight:600;
-    transition:all .15s ease;
-  }
-  .view-toggle button:hover:not(.active){color:var(--text);}
-  .view-toggle button.active{
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    color:#0b0d12;
-  }
+    @media (max-width:640px) {
+      #addIdeaBtn span.label {
+        display: none;
+      }
 
-  /* Search bar */
-  .search-section{
-    max-width:560px;
-    margin:0 auto 22px;
-    position:relative;
-  }
-  .search-section .icon{
-    position:absolute;
-    left:17px;
-    top:50%;
-    transform:translateY(-50%);
-    color:var(--text-dim);
-    font-size:1rem;
-    pointer-events:none;
-  }
-  .search-section input{
-    width:100%;
-    padding:14px 42px 14px 46px;
-    border-radius:14px;
-    border:1px solid var(--border);
-    background:var(--surface);
-    color:var(--text);
-    font-size:.95rem;
-    outline:none;
-    transition:border-color .15s ease, box-shadow .15s ease;
-  }
-  .search-section input::placeholder{color:var(--text-dim);}
-  .search-section input:focus{
-    border-color:var(--accent);
-    box-shadow:0 0 0 3px rgba(124,92,255,.18);
-  }
-  .search-section .clear-btn{
-    position:absolute;
-    right:12px;
-    top:50%;
-    transform:translateY(-50%);
-    background:none;
-    border:none;
-    color:var(--text-dim);
-    cursor:pointer;
-    font-size:1.15rem;
-    display:none;
-    line-height:1;
-    padding:4px;
-  }
-  .search-section .clear-btn:hover{color:var(--text);}
-  .search-section.has-value .clear-btn{display:block;}
+      #addIdeaBtn {
+        padding: 12px;
+      }
 
-  .filters{
-    display:flex;
-    flex-wrap:wrap;
-    gap:20px;
-    justify-content:center;
-    align-items:flex-start;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:20px 24px;
-    margin-bottom:32px;
-  }
-  .filter-group{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    align-items:center;
-  }
-  .filter-group .label{
-    font-size:.75rem;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color:var(--text-dim);
-    font-weight:600;
-  }
-  .chip-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
-  .chip{
-    border:1px solid var(--border);
-    background:var(--bg-alt);
-    color:var(--text-dim);
-    padding:7px 14px;
-    border-radius:999px;
-    font-size:.85rem;
-    cursor:pointer;
-    transition:all .15s ease;
-    user-select:none;
-  }
-  .chip:hover{border-color:var(--accent);color:var(--text);}
-  .chip.active{
-    background:var(--accent);
-    border-color:var(--accent);
-    color:#fff;
-    font-weight:600;
-  }
-  .chip.active.cat{background:var(--accent-2);border-color:var(--accent-2);color:#03212a;}
+      .top-actions {
+        top: 16px;
+        right: 16px;
+      }
+    }
 
-  .results-count{
-    text-align:center;
-    color:var(--text-dim);
-    font-size:.9rem;
-    margin-bottom:18px;
-  }
+    /* Google hesap girişi */
+    .auth-section {
+      max-width: 420px;
+      margin: 0 auto 14px;
+    }
 
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
-    gap:20px;
-  }
+    .auth-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .88rem;
+      transition: all .15s ease;
+    }
 
-  .card{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:22px;
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    position:relative;
-  }
-  .card:hover{
-    transform:translateY(-4px);
-    box-shadow:var(--shadow);
-    border-color:#333d4d;
-  }
+    .auth-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-2);
+      box-shadow: 0 10px 22px rgba(124, 92, 255, .15);
+    }
 
-  .card-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:10px;
-  }
-  .card h3{margin:0;font-size:1.15rem;line-height:1.35;}
+    .auth-profile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 14px;
+    }
 
-  .badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
-  .badge{
-    font-size:.72rem;
-    font-weight:700;
-    padding:4px 10px;
-    border-radius:999px;
-    white-space:nowrap;
-  }
-  .badge.diff-Başlangıç{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.35);}
-  .badge.diff-Orta{background:rgba(227,179,65,.15);color:var(--yellow);border:1px solid rgba(227,179,65,.35);}
-  .badge.diff-İleri{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.35);}
-  .badge.cat{background:rgba(124,92,255,.15);color:#b8a6ff;border:1px solid rgba(124,92,255,.35);}
-  .badge.custom{background:rgba(244,114,182,.15);color:var(--accent-3);border:1px solid rgba(244,114,182,.35);}
-  .badge.ai{background:rgba(34,211,238,.15);color:var(--accent-2);border:1px solid rgba(34,211,238,.35);}
+    .auth-profile .who {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
 
-  .desc{color:var(--text-dim);font-size:.92rem;line-height:1.55;margin:0;}
+    .auth-profile .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      flex: 0 0 auto;
+      object-fit: cover;
+    }
 
-  .section-title{
-    font-size:.72rem;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color:var(--text-dim);
-    font-weight:700;
-    margin:2px 0 6px;
-  }
+    .auth-profile .avatar.fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b0d12;
+      font-weight: 800;
+      font-size: .9rem;
+    }
 
-  .tags{display:flex;flex-wrap:wrap;gap:6px;}
-  .tag{
-    font-size:.75rem;
-    background:var(--bg-alt);
-    border:1px solid var(--border);
-    color:var(--accent-2);
-    padding:4px 10px;
-    border-radius:8px;
-  }
+    .auth-profile .name {
+      font-size: .85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
 
-  .checklist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
-  .checklist li{
-    display:flex;
-    align-items:flex-start;
-    gap:9px;
-    font-size:.87rem;
-    color:var(--text);
-    cursor:pointer;
-    user-select:none;
-  }
-  .checklist li .box{
-    flex:0 0 16px;
-    width:16px;height:16px;
-    border-radius:5px;
-    border:1.5px solid var(--border);
-    margin-top:2px;
-    display:flex;align-items:center;justify-content:center;
-    transition:all .15s ease;
-  }
-  .checklist li.checked .box{background:var(--accent);border-color:var(--accent);}
-  .checklist li.checked .box::after{content:"✓";font-size:11px;color:#fff;line-height:1;}
-  .checklist li.checked span.txt{color:var(--text-dim);text-decoration:line-through;}
+    .auth-profile .sync-status {
+      font-size: .72rem;
+      color: var(--text-dim);
+    }
 
-  /* Status control */
-  .status-row{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    flex-wrap:wrap;
-  }
-  .status-row .status-label{
-    font-size:.72rem;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color:var(--text-dim);
-    font-weight:700;
-  }
-  select.status-select{
-    border-radius:999px;
-    border:1px solid var(--border);
-    padding:6px 12px;
-    font-size:.78rem;
-    font-weight:700;
-    cursor:pointer;
-    background:var(--bg-alt);
-    color:var(--text);
-    outline:none;
-    transition:all .15s ease;
-  }
-  select.status-select.status-idea{background:rgba(124,92,255,.15);color:#c7b9ff;border-color:rgba(124,92,255,.4);}
-  select.status-select.status-progress{background:rgba(227,179,65,.15);color:var(--yellow);border-color:rgba(227,179,65,.4);}
-  select.status-select.status-done{background:rgba(63,185,80,.15);color:var(--green);border-color:rgba(63,185,80,.4);}
+    .auth-profile .sync-status.syncing {
+      color: var(--accent-2);
+    }
 
-  .bookmark-btn{
-    background:none;
-    border:1px solid var(--border);
-    color:var(--text-dim);
-    cursor:pointer;
-    font-size:.85rem;
-    padding:3px 9px;
-    border-radius:999px;
-    transition:all .15s ease;
-    line-height:1.4;
-  }
-  .bookmark-btn:hover{border-color:var(--accent-2);color:var(--accent-2);}
-  .bookmark-btn.saved{
-    background:rgba(124,92,255,.18);
-    border-color:var(--accent);
-    color:#c7b9ff;
-  }
+    .auth-profile .sync-status.synced {
+      color: var(--green);
+    }
 
-  .delete-btn{
-    background:none;
-    border:none;
-    color:var(--text-dim);
-    cursor:pointer;
-    font-size:.95rem;
-    padding:3px 7px;
-    border-radius:7px;
-    transition:all .15s ease;
-    line-height:1;
-  }
-  .delete-btn:hover{color:var(--red);background:rgba(248,81,73,.12);}
+    .auth-profile .sync-status.error {
+      color: var(--red);
+    }
 
-  .empty{
-    text-align:center;
-    color:var(--text-dim);
-    padding:60px 20px;
-    border:1px dashed var(--border);
-    border-radius:var(--radius);
-  }
+    .auth-profile .signout-btn {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 7px 14px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 600;
+      flex: 0 0 auto;
+    }
 
-  footer{
-    text-align:center;
-    color:var(--text-dim);
-    font-size:.8rem;
-    margin-top:60px;
-  }
+    .auth-profile .signout-btn:hover {
+      color: var(--red);
+      border-color: rgba(248, 81, 73, .4);
+    }
 
-  /* spotlight animation */
-  @keyframes popIn{
-    0%{opacity:0;transform:scale(.85) translateY(14px);}
-    60%{opacity:1;transform:scale(1.02) translateY(-2px);}
-    100%{opacity:1;transform:scale(1) translateY(0);}
-  }
-  .spotlight .card{
-    animation:popIn .5s cubic-bezier(.2,.9,.3,1.3);
-    border:1px solid var(--accent);
-    box-shadow:0 0 0 1px rgba(124,92,255,.3), 0 20px 45px rgba(124,92,255,.25);
-    position:relative;
-  }
-  .spotlight .ribbon{
-    position:absolute;
-    top:-12px;
-    left:22px;
-    background:linear-gradient(90deg,var(--accent),var(--accent-3));
-    color:#fff;
-    font-size:.72rem;
-    font-weight:700;
-    padding:5px 12px;
-    border-radius:999px;
-    box-shadow:0 6px 14px rgba(124,92,255,.4);
-  }
+    .auth-error {
+      text-align: center;
+      font-size: .78rem;
+      color: var(--red);
+      margin-top: 8px;
+      min-height: 16px;
+    }
 
-  .shuffling{
-    animation:shuffleShake .45s ease;
-  }
-  @keyframes shuffleShake{
-    0%{opacity:.3;transform:scale(.9) rotate(-1deg);}
-    50%{opacity:.6;transform:scale(1.03) rotate(1deg);}
-    100%{opacity:1;transform:scale(1) rotate(0);}
-  }
+    /* API key settings */
+    .api-settings {
+      max-width: 560px;
+      margin: 0 auto 22px;
+    }
 
-  /* Skeleton loader (AI generating) */
-  .skeleton-card{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:22px;
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-    position:relative;
-    animation:popIn .4s ease;
-  }
-  .skel{
-    background:linear-gradient(90deg, var(--bg-alt) 25%, var(--surface-hover) 50%, var(--bg-alt) 75%);
-    background-size:200% 100%;
-    animation:skelShine 1.3s ease-in-out infinite;
-    border-radius:8px;
-  }
-  @keyframes skelShine{
-    0%{background-position:200% 0;}
-    100%{background-position:-200% 0;}
-  }
-  .skel-title{height:22px;width:65%;}
-  .skel-line{height:11px;width:100%;}
-  .skel-line.short{width:55%;}
-  .skel-tags{display:flex;gap:6px;}
-  .skel-tag{height:22px;width:64px;border-radius:8px;}
+    .api-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 11px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 600;
+      transition: all .15s ease;
+    }
 
-  .error-card{
-    background:var(--surface);
-    border:1px solid rgba(248,81,73,.4);
-    border-radius:var(--radius);
-    padding:24px;
-    text-align:center;
-    color:var(--text-dim);
-    animation:popIn .4s ease;
-  }
-  .error-card .emoji{font-size:1.6rem;margin-bottom:8px;}
-  .error-card strong{color:var(--red);display:block;margin-bottom:6px;}
-  .error-card .retry-btn{
-    margin-top:14px;
-    background:var(--bg-alt);
-    border:1px solid var(--border);
-    color:var(--text);
-    padding:9px 18px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    font-size:.85rem;
-  }
-  .error-card .retry-btn:hover{border-color:var(--accent-2);color:var(--accent-2);}
+    .api-toggle:hover {
+      color: var(--text);
+      border-color: var(--accent-2);
+    }
 
-  /* Modal */
-  .modal-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(4,6,10,.72);
-    backdrop-filter:blur(3px);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:100;
-    padding:20px;
-  }
-  .modal-overlay.show{display:flex;}
-  .modal-box{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:20px;
-    width:100%;
-    max-width:520px;
-    max-height:88vh;
-    overflow-y:auto;
-    padding:28px;
-    box-shadow:0 30px 70px rgba(0,0,0,.55);
-    animation:popIn .35s cubic-bezier(.2,.9,.3,1.2);
-  }
-  .modal-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    margin-bottom:18px;
-  }
-  .modal-box h2{margin:0 0 6px;font-size:1.3rem;}
-  .modal-box .sub{color:var(--text-dim);font-size:.85rem;margin:0;}
-  .modal-close{
-    background:none;
-    border:none;
-    color:var(--text-dim);
-    font-size:1.3rem;
-    cursor:pointer;
-    line-height:1;
-    padding:2px 6px;
-    border-radius:8px;
-  }
-  .modal-close:hover{color:var(--text);background:var(--bg-alt);}
-  .form-group{margin-bottom:16px;display:flex;flex-direction:column;gap:6px;}
-  .form-group label{font-size:.8rem;font-weight:600;color:var(--text-dim);}
-  .form-row{display:flex;gap:12px;}
-  .form-row .form-group{flex:1;}
-  .modal-box input[type=text], .modal-box textarea, .modal-box select{
-    width:100%;
-    background:var(--bg-alt);
-    border:1px solid var(--border);
-    color:var(--text);
-    padding:10px 12px;
-    border-radius:10px;
-    font-size:.88rem;
-    font-family:inherit;
-    outline:none;
-    resize:vertical;
-  }
-  .modal-box input:focus, .modal-box textarea:focus, .modal-box select:focus{
-    border-color:var(--accent);
-    box-shadow:0 0 0 3px rgba(124,92,255,.15);
-  }
-  .hint{font-size:.72rem;color:var(--text-dim);}
-  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;}
-  .btn-secondary{
-    background:var(--bg-alt);
-    border:1px solid var(--border);
-    color:var(--text-dim);
-    padding:10px 20px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    font-size:.88rem;
-  }
-  .btn-secondary:hover{color:var(--text);border-color:#3a4454;}
-  .btn-primary{
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    border:none;
-    color:#0b0d12;
-    padding:10px 22px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:700;
-    font-size:.88rem;
-  }
-  .btn-primary:hover{filter:brightness(1.08);}
+    .api-toggle .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 8px rgba(248, 81, 73, .6);
+      flex: 0 0 auto;
+    }
 
-  @media (max-width:520px){
-    header h1{font-size:1.7rem;}
-    .filters{padding:16px;}
-    .form-row{flex-direction:column;gap:0;}
-  }
-</style>
+    .api-toggle.connected .dot {
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(63, 185, 80, .6);
+    }
+
+    .api-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease;
+    }
+
+    .api-panel.open {
+      max-height: 260px;
+    }
+
+    .api-panel-inner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 14px 14px;
+      padding: 18px;
+    }
+
+    .api-input-row {
+      position: relative;
+    }
+
+    .api-input-row input {
+      width: 100%;
+      padding: 11px 46px 11px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-alt);
+      color: var(--text);
+      font-size: .85rem;
+      outline: none;
+      font-family: monospace;
+    }
+
+    .api-input-row input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124, 92, 255, .15);
+    }
+
+    .api-input-row button {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px 6px;
+    }
+
+    .api-input-row button:hover {
+      color: var(--text);
+    }
+
+    .api-hint {
+      font-size: .74rem;
+      color: var(--text-dim);
+      margin-top: 9px;
+      line-height: 1.55;
+    }
+
+    .api-hint a {
+      color: var(--accent-2);
+    }
+
+    .api-saved {
+      font-size: .75rem;
+      color: var(--green);
+      margin-top: 6px;
+      height: 16px;
+      opacity: 0;
+      transition: opacity .3s ease;
+    }
+
+    .api-saved.show {
+      opacity: 1;
+    }
+
+    .random-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin: 28px 0 6px;
+    }
+
+    #randomBtn {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: none;
+      color: #0b0d12;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 16px 34px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--accent-3));
+      background-size: 200% 100%;
+      box-shadow: 0 12px 30px rgba(124, 92, 255, .35);
+      transition: transform .15s ease, box-shadow .15s ease, background-position .6s ease;
+    }
+
+    #randomBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(124, 92, 255, .45);
+      background-position: 100% 0;
+    }
+
+    #randomBtn:active {
+      transform: translateY(0px) scale(.98);
+    }
+
+    #aiBtn {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid rgba(124, 92, 255, .5);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.02rem;
+      padding: 15px 30px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(124, 92, 255, .28), rgba(34, 211, 238, .22), rgba(244, 114, 182, .28));
+      box-shadow: 0 10px 26px rgba(124, 92, 255, .22);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    #aiBtn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .4), transparent);
+      transform: skewX(-20deg);
+      animation: shimmerSweep 2.6s ease-in-out infinite;
+    }
+
+    @keyframes shimmerSweep {
+      0% {
+        left: -60%;
+      }
+
+      55% {
+        left: 120%;
+      }
+
+      100% {
+        left: 120%;
+      }
+    }
+
+    #aiBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(124, 92, 255, .32);
+    }
+
+    #aiBtn:active {
+      transform: translateY(0) scale(.98);
+    }
+
+    #aiBtn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    #aiBtn:disabled::before {
+      display: none;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, .35);
+      border-top-color: #fff;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .ai-status {
+      text-align: center;
+      font-size: .85rem;
+      margin: 14px 0 8px;
+      min-height: 18px;
+      transition: color .2s ease;
+    }
+
+    .ai-status.error {
+      color: var(--red);
+    }
+
+    .ai-status.info {
+      color: var(--text-dim);
+    }
+
+    .ai-status.success {
+      color: var(--green);
+    }
+
+    .spotlight {
+      max-width: 720px;
+      margin: 20px auto 40px;
+      display: none;
+    }
+
+    .spotlight.show {
+      display: block;
+    }
+
+    /* Görünüm anahtarı: Tüm Fikirler / Kütüphanem */
+    .view-toggle {
+      display: flex;
+      gap: 6px;
+      max-width: 420px;
+      margin: 0 auto 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px;
+    }
+
+    .view-toggle button {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      padding: 9px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: .83rem;
+      font-weight: 600;
+      transition: all .15s ease;
+    }
+
+    .view-toggle button:hover:not(.active) {
+      color: var(--text);
+    }
+
+    .view-toggle button.active {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #0b0d12;
+    }
+
+    /* Search bar */
+    .search-section {
+      max-width: 560px;
+      margin: 0 auto 22px;
+      position: relative;
+    }
+
+    .search-section .icon {
+      position: absolute;
+      left: 17px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .search-section input {
+      width: 100%;
+      padding: 14px 42px 14px 46px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .search-section input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .search-section input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124, 92, 255, .18);
+    }
+
+    .search-section .clear-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 1.15rem;
+      display: none;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .search-section .clear-btn:hover {
+      color: var(--text);
+    }
+
+    .search-section.has-value .clear-btn {
+      display: block;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .filter-group .label {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: var(--bg-alt);
+      color: var(--text-dim);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .15s ease;
+      user-select: none;
+    }
+
+    .chip:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .chip.active.cat {
+      background: var(--accent-2);
+      border-color: var(--accent-2);
+      color: #03212a;
+    }
+
+    .results-count {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: .9rem;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+      border-color: #333d4d;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      line-height: 1.35;
+    }
+
+    .badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .badge.diff-Başlangıç {
+      background: rgba(63, 185, 80, .15);
+      color: var(--green);
+      border: 1px solid rgba(63, 185, 80, .35);
+    }
+
+    .badge.diff-Orta {
+      background: rgba(227, 179, 65, .15);
+      color: var(--yellow);
+      border: 1px solid rgba(227, 179, 65, .35);
+    }
+
+    .badge.diff-İleri {
+      background: rgba(248, 81, 73, .15);
+      color: var(--red);
+      border: 1px solid rgba(248, 81, 73, .35);
+    }
+
+    .badge.cat {
+      background: rgba(124, 92, 255, .15);
+      color: #b8a6ff;
+      border: 1px solid rgba(124, 92, 255, .35);
+    }
+
+    .badge.custom {
+      background: rgba(244, 114, 182, .15);
+      color: var(--accent-3);
+      border: 1px solid rgba(244, 114, 182, .35);
+    }
+
+    .badge.ai {
+      background: rgba(34, 211, 238, .15);
+      color: var(--accent-2);
+      border: 1px solid rgba(34, 211, 238, .35);
+    }
+
+    .desc {
+      color: var(--text-dim);
+      font-size: .92rem;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .section-title {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      font-weight: 700;
+      margin: 2px 0 6px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: .75rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--accent-2);
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .checklist {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: .87rem;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checklist li .box {
+      flex: 0 0 16px;
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      border: 1.5px solid var(--border);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s ease;
+    }
+
+    .checklist li.checked .box {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .checklist li.checked .box::after {
+      content: "✓";
+      font-size: 11px;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .checklist li.checked span.txt {
+      color: var(--text-dim);
+      text-decoration: line-through;
+    }
+
+    /* Status control */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .status-row .status-label {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    select.status-select {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      font-size: .78rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--bg-alt);
+      color: var(--text);
+      outline: none;
+      transition: all .15s ease;
+    }
+
+    select.status-select.status-idea {
+      background: rgba(124, 92, 255, .15);
+      color: #c7b9ff;
+      border-color: rgba(124, 92, 255, .4);
+    }
+
+    select.status-select.status-progress {
+      background: rgba(227, 179, 65, .15);
+      color: var(--yellow);
+      border-color: rgba(227, 179, 65, .4);
+    }
+
+    select.status-select.status-done {
+      background: rgba(63, 185, 80, .15);
+      color: var(--green);
+      border-color: rgba(63, 185, 80, .4);
+    }
+
+    .bookmark-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: .85rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      transition: all .15s ease;
+      line-height: 1.4;
+    }
+
+    .bookmark-btn:hover {
+      border-color: var(--accent-2);
+      color: var(--accent-2);
+    }
+
+    .bookmark-btn.saved {
+      background: rgba(124, 92, 255, .18);
+      border-color: var(--accent);
+      color: #c7b9ff;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: .95rem;
+      padding: 3px 7px;
+      border-radius: 7px;
+      transition: all .15s ease;
+      line-height: 1;
+    }
+
+    .delete-btn:hover {
+      color: var(--red);
+      background: rgba(248, 81, 73, .12);
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--text-dim);
+      padding: 60px 20px;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: .8rem;
+      margin-top: 60px;
+    }
+
+    /* spotlight animation */
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: scale(.85) translateY(14px);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scale(1.02) translateY(-2px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .spotlight .card {
+      animation: popIn .5s cubic-bezier(.2, .9, .3, 1.3);
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 0 1px rgba(124, 92, 255, .3), 0 20px 45px rgba(124, 92, 255, .25);
+      position: relative;
+    }
+
+    .spotlight .ribbon {
+      position: absolute;
+      top: -12px;
+      left: 22px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-3));
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      box-shadow: 0 6px 14px rgba(124, 92, 255, .4);
+    }
+
+    .shuffling {
+      animation: shuffleShake .45s ease;
+    }
+
+    @keyframes shuffleShake {
+      0% {
+        opacity: .3;
+        transform: scale(.9) rotate(-1deg);
+      }
+
+      50% {
+        opacity: .6;
+        transform: scale(1.03) rotate(1deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+      }
+    }
+
+    /* Skeleton loader (AI generating) */
+    .skeleton-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      animation: popIn .4s ease;
+    }
+
+    .skel {
+      background: linear-gradient(90deg, var(--bg-alt) 25%, var(--surface-hover) 50%, var(--bg-alt) 75%);
+      background-size: 200% 100%;
+      animation: skelShine 1.3s ease-in-out infinite;
+      border-radius: 8px;
+    }
+
+    @keyframes skelShine {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    .skel-title {
+      height: 22px;
+      width: 65%;
+    }
+
+    .skel-line {
+      height: 11px;
+      width: 100%;
+    }
+
+    .skel-line.short {
+      width: 55%;
+    }
+
+    .skel-tags {
+      display: flex;
+      gap: 6px;
+    }
+
+    .skel-tag {
+      height: 22px;
+      width: 64px;
+      border-radius: 8px;
+    }
+
+    .error-card {
+      background: var(--surface);
+      border: 1px solid rgba(248, 81, 73, .4);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      color: var(--text-dim);
+      animation: popIn .4s ease;
+    }
+
+    .error-card .emoji {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    .error-card strong {
+      color: var(--red);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .error-card .retry-btn {
+      margin-top: 14px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .85rem;
+    }
+
+    .error-card .retry-btn:hover {
+      border-color: var(--accent-2);
+      color: var(--accent-2);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 10, .72);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, .55);
+      animation: popIn .35s cubic-bezier(.2, .9, .3, 1.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .modal-box h2 {
+      margin: 0 0 6px;
+      font-size: 1.3rem;
+    }
+
+    .modal-box .sub {
+      color: var(--text-dim);
+      font-size: .85rem;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.3rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+      background: var(--bg-alt);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .modal-box input[type=text],
+    .modal-box textarea,
+    .modal-box select {
+      width: 100%;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: .88rem;
+      font-family: inherit;
+      outline: none;
+      resize: vertical;
+    }
+
+    .modal-box input:focus,
+    .modal-box textarea:focus,
+    .modal-box select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124, 92, 255, .15);
+    }
+
+    .hint {
+      font-size: .72rem;
+      color: var(--text-dim);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .btn-secondary {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .88rem;
+    }
+
+    .btn-secondary:hover {
+      color: var(--text);
+      border-color: #3a4454;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border: none;
+      color: #0b0d12;
+      padding: 10px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: .88rem;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.08);
+    }
+
+    @media (max-width:520px) {
+      header h1 {
+        font-size: 1.7rem;
+      }
+
+      .filters {
+        padding: 16px;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="top-actions">
-  <button id="addIdeaBtn" type="button">
-    <span class="plus">+</span><span class="label">Yeni Fikir Ekle</span>
-  </button>
-</div>
-
-<div class="wrap">
-
-  <header>
-    <h1>🚀 Proje Fikri Bulucu</h1>
-    <p>Yeni bir şey inşa etmek için ilham al. Ara, filtrele, keşfet, şansına bırak ya da yapay zekaya üretsin.</p>
-  </header>
-
-  <div class="auth-section" id="authSection">
-    <!-- JS tarafından doldurulur: giriş butonu ya da profil kartı -->
-  </div>
-  <div class="auth-error" id="authErrorMsg"></div>
-
-  <div class="api-settings">
-    <button class="api-toggle" id="apiToggleBtn" type="button">
-      <span class="dot"></span>
-      <span id="apiToggleLabel">🔑 Gemini API Key Ayarla</span>
+  <div class="top-actions">
+    <button id="addIdeaBtn" type="button">
+      <span class="plus">+</span><span class="label">Yeni Fikir Ekle</span>
     </button>
-    <div class="api-panel" id="apiPanel">
-      <div class="api-panel-inner">
-        <div class="api-input-row">
-          <input type="password" id="apiKeyInput" placeholder="Gemini API anahtarını yapıştır (AIza...)" autocomplete="off" spellcheck="false">
-          <button type="button" id="toggleKeyVisibility" title="Göster/Gizle">👁</button>
+  </div>
+
+  <div class="wrap">
+
+    <header>
+      <h1>🚀 Proje Fikri Bulucu</h1>
+      <p>Yeni bir şey inşa etmek için ilham al. Ara, filtrele, keşfet, şansına bırak ya da yapay zekaya üretsin.</p>
+    </header>
+
+    <div class="auth-section" id="authSection">
+      <!-- JS tarafından doldurulur: giriş butonu ya da profil kartı -->
+    </div>
+    <div class="auth-error" id="authErrorMsg"></div>
+
+    <div class="api-settings">
+      <button class="api-toggle" id="apiToggleBtn" type="button">
+        <span class="dot"></span>
+        <span id="apiToggleLabel">🔑 Gemini API Key Ayarla</span>
+      </button>
+      <div class="api-panel" id="apiPanel">
+        <div class="api-panel-inner">
+          <div class="api-input-row">
+            <input type="password" id="apiKeyInput" placeholder="Gemini API anahtarını yapıştır (AIza...)"
+              autocomplete="off" spellcheck="false">
+            <button type="button" id="toggleKeyVisibility" title="Göster/Gizle">👁</button>
+          </div>
+          <div class="api-saved" id="apiSavedMsg">Kaydedildi ✓</div>
+          <p class="api-hint">Anahtarın yalnızca bu tarayıcının LocalStorage'ında saklanır, hiçbir sunucuya gönderilmez.
+            Google AI Studio üzerinden ücretsiz bir anahtar alabilirsin.</p>
         </div>
-        <div class="api-saved" id="apiSavedMsg">Kaydedildi ✓</div>
-        <p class="api-hint">Anahtarın yalnızca bu tarayıcının LocalStorage'ında saklanır, hiçbir sunucuya gönderilmez. Google AI Studio üzerinden ücretsiz bir anahtar alabilirsin.</p>
       </div>
     </div>
-  </div>
 
-  <div class="random-bar">
-    <button id="randomBtn">🎲 Bana Rastgele Bir Proje Ver!</button>
-    <button id="aiBtn">✨ AI ile Yeni Fikir Üret</button>
-  </div>
-  <div class="ai-status" id="aiStatusMsg"></div>
-
-  <div class="spotlight" id="spotlight"></div>
-
-  <div class="view-toggle" id="viewToggle">
-    <button type="button" data-view="all" class="active">Tüm Fikirler</button>
-    <button type="button" data-view="library">🔖 Kütüphanem (<span id="libraryCount">0</span>)</button>
-  </div>
-
-  <div class="search-section" id="searchSection">
-    <span class="icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Proje adı, açıklama veya teknoloji ara (React, Node, C# ...)">
-    <button class="clear-btn" id="clearSearchBtn" type="button" title="Aramayı temizle">×</button>
-  </div>
-
-  <div class="filters">
-    <div class="filter-group">
-      <div class="label">Zorluk</div>
-      <div class="chip-row" id="difficultyFilters"></div>
+    <div class="random-bar">
+      <button id="randomBtn">🎲 Bana Rastgele Bir Proje Ver!</button>
+      <button id="aiBtn">✨ AI ile Yeni Fikir Üret</button>
     </div>
-    <div class="filter-group">
-      <div class="label">Kategori</div>
-      <div class="chip-row" id="categoryFilters"></div>
+    <div class="ai-status" id="aiStatusMsg"></div>
+
+    <div class="spotlight" id="spotlight"></div>
+
+    <div class="view-toggle" id="viewToggle">
+      <button type="button" data-view="all" class="active">Tüm Fikirler</button>
+      <button type="button" data-view="library">🔖 Kütüphanem (<span id="libraryCount">0</span>)</button>
     </div>
-  </div>
 
-  <div class="results-count" id="resultsCount"></div>
+    <div class="search-section" id="searchSection">
+      <span class="icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Proje adı, açıklama veya teknoloji ara (React, Node, C# ...)">
+      <button class="clear-btn" id="clearSearchBtn" type="button" title="Aramayı temizle">×</button>
+    </div>
 
-  <div class="grid" id="grid"></div>
-
-  <footer>Fikirlerin toplam sayısı otomatik güncellenir • Yeni şeyler inşa etmenin en iyi yolu, başlamaktır.</footer>
-</div>
-
-<!-- Yeni fikir ekleme modalı -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div>
-        <h2>✨ Yeni Proje Fikri Ekle</h2>
-        <p class="sub">Eklediğin fikir bu tarayıcıda (ve giriş yaptıysan bulutta) saklanır ve havuza dahil olur.</p>
+    <div class="filters">
+      <div class="filter-group">
+        <div class="label">Zorluk</div>
+        <div class="chip-row" id="difficultyFilters"></div>
       </div>
-      <button class="modal-close" id="modalCloseBtn" type="button">×</button>
-    </div>
-    <form id="ideaForm">
-      <div class="form-group">
-        <label for="f-name">Proje Adı</label>
-        <input type="text" id="f-name" required placeholder="Örn: Akıllı Tarif Öneri Botu">
+      <div class="filter-group">
+        <div class="label">Kategori</div>
+        <div class="chip-row" id="categoryFilters"></div>
       </div>
-      <div class="form-row">
+    </div>
+
+    <div class="results-count" id="resultsCount"></div>
+
+    <div class="grid" id="grid"></div>
+
+    <footer>Fikirlerin toplam sayısı otomatik güncellenir • Yeni şeyler inşa etmenin en iyi yolu, başlamaktır.</footer>
+  </div>
+
+  <!-- Yeni fikir ekleme modalı -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h2>✨ Yeni Proje Fikri Ekle</h2>
+          <p class="sub">Eklediğin fikir bu tarayıcıda (ve giriş yaptıysan bulutta) saklanır ve havuza dahil olur.</p>
+        </div>
+        <button class="modal-close" id="modalCloseBtn" type="button">×</button>
+      </div>
+      <form id="ideaForm">
         <div class="form-group">
-          <label for="f-category">Kategori</label>
-          <input type="text" id="f-category" list="categoryList" required placeholder="Örn: Web">
-          <datalist id="categoryList"></datalist>
+          <label for="f-name">Proje Adı</label>
+          <input type="text" id="f-name" required placeholder="Örn: Akıllı Tarif Öneri Botu">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-category">Kategori</label>
+            <input type="text" id="f-category" list="categoryList" required placeholder="Örn: Web">
+            <datalist id="categoryList"></datalist>
+          </div>
+          <div class="form-group">
+            <label for="f-difficulty">Zorluk</label>
+            <select id="f-difficulty">
+              <option value="Başlangıç">Başlangıç</option>
+              <option value="Orta" selected>Orta</option>
+              <option value="İleri">İleri</option>
+            </select>
+          </div>
         </div>
         <div class="form-group">
-          <label for="f-difficulty">Zorluk</label>
-          <select id="f-difficulty">
-            <option value="Başlangıç">Başlangıç</option>
-            <option value="Orta" selected>Orta</option>
-            <option value="İleri">İleri</option>
-          </select>
+          <label for="f-description">Açıklama</label>
+          <textarea id="f-description" rows="3" required placeholder="Projenin kısa açıklaması..."></textarea>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="f-description">Açıklama</label>
-        <textarea id="f-description" rows="3" required placeholder="Projenin kısa açıklaması..."></textarea>
-      </div>
-      <div class="form-group">
-        <label for="f-tech">Teknolojiler</label>
-        <input type="text" id="f-tech" placeholder="React, Node.js, MongoDB">
-        <span class="hint">Virgülle ayır.</span>
-      </div>
-      <div class="form-group">
-        <label for="f-features">Temel Özellikler</label>
-        <textarea id="f-features" rows="4" placeholder="Her satıra bir özellik yaz..."></textarea>
-        <span class="hint">Her satır ayrı bir checklist maddesi olur.</span>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn-secondary" id="cancelIdeaBtn">İptal</button>
-        <button type="submit" class="btn-primary">Fikri Ekle</button>
-      </div>
-    </form>
+        <div class="form-group">
+          <label for="f-tech">Teknolojiler</label>
+          <input type="text" id="f-tech" placeholder="React, Node.js, MongoDB">
+          <span class="hint">Virgülle ayır.</span>
+        </div>
+        <div class="form-group">
+          <label for="f-features">Temel Özellikler</label>
+          <textarea id="f-features" rows="4" placeholder="Her satıra bir özellik yaz..."></textarea>
+          <span class="hint">Her satır ayrı bir checklist maddesi olur.</span>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="cancelIdeaBtn">İptal</button>
+          <button type="submit" class="btn-primary">Fikri Ekle</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
-<!-- Firebase Authentication + Firestore entegrasyonu (ESM, CDN üzerinden) -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-  import {
-    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-  import {
-    getFirestore, doc, getDoc, setDoc
-  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+  <!-- Firebase Authentication + Firestore entegrasyonu (ESM, CDN üzerinden) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+    import {
+      getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, setDoc
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-  // ============================================================================
-  // ⚠️ BURAYI DOLDUR: Kendi Firebase projenin ayarlarını buraya yapıştır.
-  // Nasıl alınır: console.firebase.google.com → Projeni oluştur →
-  // Project settings (dişli ikon) → General → "Your apps" → Web (</>) simgesi →
-  // Uygulamayı kaydet → sana gösterilen firebaseConfig nesnesini buraya kopyala.
-  // Ayrıca Authentication → Sign-in method → Google sağlayıcısını etkinleştirmen,
-  // Firestore Database oluşturman ve Authentication → Settings → Authorized
-  // domains kısmına sitenin adresini (örn. ardasoftwarestudio.github.io) eklemen gerekir.
-  // ============================================================================
-  const firebaseConfig = {
-    apiKey: "BURAYA_KENDI_API_KEYINI_YAPISTIR",
-    authDomain: "BURAYA_KENDI_AUTH_DOMAININI_YAPISTIR",
-    projectId: "BURAYA_KENDI_PROJECT_IDNI_YAPISTIR",
-    storageBucket: "BURAYA_KENDI_STORAGE_BUCKETINI_YAPISTIR",
-    messagingSenderId: "BURAYA_KENDI_SENDER_IDNI_YAPISTIR",
-    appId: "BURAYA_KENDI_APP_IDNI_YAPISTIR"
-  };
+    // ============================================================================
+    // ⚠️ BURAYI DOLDUR: Kendi Firebase projenin ayarlarını buraya yapıştır.
+    // Nasıl alınır: console.firebase.google.com → Projeni oluştur →
+    // Project settings (dişli ikon) → General → "Your apps" → Web (</>) simgesi →
+    // Uygulamayı kaydet → sana gösterilen firebaseConfig nesnesini buraya kopyala.
+    // Ayrıca Authentication → Sign-in method → Google sağlayıcısını etkinleştirmen,
+    // Firestore Database oluşturman ve Authentication → Settings → Authorized
+    // domains kısmına sitenin adresini (örn. ardasoftwarestudio.github.io) eklemen gerekir.
+    // ============================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyAbciNTYTRNs5mPQGxzI-cCxnijXFi43Fw",
+      authDomain: "projectrepo-84c58.firebaseapp.com",
+      projectId: "projectrepo-84c58",
+      storageBucket: "projectrepo-84c58.firebasestorage.app",
+      messagingSenderId: "1074498568576",
+      appId: "1:1074498568576:web:ef88a1c4f19f440e770165",
+      measurementId: "G-T7CVGF9YGC"
+    };
 
-  const isConfigured = firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith("BURAYA_");
+    const isConfigured = firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith("BURAYA_");
 
-  let app = null, auth = null, db = null, googleProvider = null;
+    let app = null, auth = null, db = null, googleProvider = null;
 
-  if(isConfigured){
-    try{
-      app = initializeApp(firebaseConfig);
-      auth = getAuth(app);
-      db = getFirestore(app);
-      googleProvider = new GoogleAuthProvider();
-    }catch(e){
-      console.warn('Firebase başlatılamadı:', e);
+    if (isConfigured) {
+      try {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        googleProvider = new GoogleAuthProvider();
+      } catch (e) {
+        console.warn('Firebase başlatılamadı:', e);
+      }
+    } else {
+      console.warn('Firebase yapılandırılmamış: index.html içindeki firebaseConfig alanını doldurman gerekiyor.');
     }
-  }else{
-    console.warn('Firebase yapılandırılmamış: index.html içindeki firebaseConfig alanını doldurman gerekiyor.');
-  }
 
-  window.__signInWithGoogle = async function(){
-    if(!auth) throw new Error('Firebase yapılandırılmamış. Koddaki firebaseConfig alanını doldur.');
-    const result = await signInWithPopup(auth, googleProvider);
-    return result.user;
-  };
+    window.__signInWithGoogle = async function () {
+      if (!auth) throw new Error('Firebase yapılandırılmamış. Koddaki firebaseConfig alanını doldur.');
+      const result = await signInWithPopup(auth, googleProvider);
+      return result.user;
+    };
 
-  window.__signOutFirebase = async function(){
-    if(!auth) return;
-    await signOut(auth);
-  };
+    window.__signOutFirebase = async function () {
+      if (!auth) return;
+      await signOut(auth);
+    };
 
-  window.__onAuthChange = function(callback){
-    if(!auth){
-      callback(null);
-      return;
+    window.__onAuthChange = function (callback) {
+      if (!auth) {
+        callback(null);
+        return;
+      }
+      onAuthStateChanged(auth, callback);
+    };
+
+    window.__loadCloudData = async function (uid) {
+      if (!db) return null;
+      const ref = doc(db, 'users', uid);
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    };
+
+    window.__saveCloudData = async function (uid, data) {
+      if (!db) return;
+      const ref = doc(db, 'users', uid);
+      await setDoc(ref, { ...data, updatedAt: Date.now() }, { merge: true });
+    };
+
+    window.__firebaseConfigured = isConfigured;
+  </script>
+
+  <!-- Gemini SDK entegrasyonu (ESM, tarayıcı üzerinden CDN) -->
+  <script type="module">
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+    // Google modelleri zaman zaman kullanımdan kaldırıyor / yeni hesaplara kapatıyor,
+    // ayrıca bazen geçici olarak "yoğun talep" (503) hatası verebiliyor.
+    // Bu yüzden tek bir model adına bağlı kalmak yerine, sırayla bir liste deniyoruz.
+    // "gemini-flash-latest" Google'ın her zaman güncel flash modelini gösteren takma adıdır.
+    const MODEL_CANDIDATES = [
+      "gemini-flash-latest",
+      "gemini-2.5-flash",
+      "gemini-3.5-flash",
+      "gemini-2.5-flash-lite"
+    ];
+
+    // Bu hata türlerinde başka bir modeli / tekrar denemeyi mantıklı buluyoruz:
+    // 404/kaldırıldı → model artık yok, sıradakini dene.
+    // 503/yoğun talep/overloaded, 429/kota → geçici, birazdan tekrar dene.
+    const RETRYABLE_ERROR_PATTERN = /404|not found|no longer available|not supported|503|overloaded|high demand|unavailable|429|quota|rate limit/i;
+
+    const RESPONSE_SCHEMA_CONFIG = {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          description: { type: "string" },
+          tech: { type: "array", items: { type: "string" } },
+          features: { type: "array", items: { type: "string" } }
+        },
+        required: ["name", "description", "tech", "features"]
+      }
+    };
+
+    const SYSTEM_INSTRUCTION =
+      "Sen yaratıcı ve deneyimli bir yazılım mimarisin. Kullanıcıya ilham verecek, klişe olmayan, " +
+      "modern bir yazılım proje fikri üretiyorsun. Cevabın SADECE ve KESİNLİKLE şu JSON formatında " +
+      "olmalı, başka hiçbir açıklama, markdown işareti ya da ek metin İÇERMEMELİ: " +
+      '{"name": string, "description": string, "tech": string[], "features": string[]}. ' +
+      "'name' kısa ve akılda kalıcı, Türkçe bir proje adı olmalı. 'description' Türkçe, 1-2 cümlelik " +
+      "net bir açıklama olmalı. 'tech' kullanılabilecek 3-5 güncel teknoloji/kütüphane ismi içermeli. " +
+      "'features' projede olması gereken 4-6 temel özelliği Türkçe olarak madde madde listelemeli.";
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
-    onAuthStateChanged(auth, callback);
-  };
 
-  window.__loadCloudData = async function(uid){
-    if(!db) return null;
-    const ref = doc(db, 'users', uid);
-    const snap = await getDoc(ref);
-    return snap.exists() ? snap.data() : null;
-  };
-
-  window.__saveCloudData = async function(uid, data){
-    if(!db) return;
-    const ref = doc(db, 'users', uid);
-    await setDoc(ref, { ...data, updatedAt: Date.now() }, { merge: true });
-  };
-
-  window.__firebaseConfigured = isConfigured;
-</script>
-
-<!-- Gemini SDK entegrasyonu (ESM, tarayıcı üzerinden CDN) -->
-<script type="module">
-  import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
-  // Google modelleri zaman zaman kullanımdan kaldırıyor / yeni hesaplara kapatıyor,
-  // ayrıca bazen geçici olarak "yoğun talep" (503) hatası verebiliyor.
-  // Bu yüzden tek bir model adına bağlı kalmak yerine, sırayla bir liste deniyoruz.
-  // "gemini-flash-latest" Google'ın her zaman güncel flash modelini gösteren takma adıdır.
-  const MODEL_CANDIDATES = [
-    "gemini-flash-latest",
-    "gemini-2.5-flash",
-    "gemini-3.5-flash",
-    "gemini-2.5-flash-lite"
-  ];
-
-  // Bu hata türlerinde başka bir modeli / tekrar denemeyi mantıklı buluyoruz:
-  // 404/kaldırıldı → model artık yok, sıradakini dene.
-  // 503/yoğun talep/overloaded, 429/kota → geçici, birazdan tekrar dene.
-  const RETRYABLE_ERROR_PATTERN = /404|not found|no longer available|not supported|503|overloaded|high demand|unavailable|429|quota|rate limit/i;
-
-  const RESPONSE_SCHEMA_CONFIG = {
-    responseMimeType: "application/json",
-    responseSchema: {
-      type: "object",
-      properties: {
-        name: { type: "string" },
-        description: { type: "string" },
-        tech: { type: "array", items: { type: "string" } },
-        features: { type: "array", items: { type: "string" } }
-      },
-      required: ["name", "description", "tech", "features"]
-    }
-  };
-
-  const SYSTEM_INSTRUCTION =
-    "Sen yaratıcı ve deneyimli bir yazılım mimarisin. Kullanıcıya ilham verecek, klişe olmayan, " +
-    "modern bir yazılım proje fikri üretiyorsun. Cevabın SADECE ve KESİNLİKLE şu JSON formatında " +
-    "olmalı, başka hiçbir açıklama, markdown işareti ya da ek metin İÇERMEMELİ: " +
-    '{"name": string, "description": string, "tech": string[], "features": string[]}. ' +
-    "'name' kısa ve akılda kalıcı, Türkçe bir proje adı olmalı. 'description' Türkçe, 1-2 cümlelik " +
-    "net bir açıklama olmalı. 'tech' kullanılabilecek 3-5 güncel teknoloji/kütüphane ismi içermeli. " +
-    "'features' projede olması gereken 4-6 temel özelliği Türkçe olarak madde madde listelemeli.";
-
-  function sleep(ms){
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async function tryAllModels(genAI, prompt){
-    let lastError = null;
-    for(let i = 0; i < MODEL_CANDIDATES.length; i++){
-      const modelName = MODEL_CANDIDATES[i];
-      try{
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          systemInstruction: SYSTEM_INSTRUCTION,
-          generationConfig: RESPONSE_SCHEMA_CONFIG
-        });
-        const result = await model.generateContent(prompt);
-        const raw = result.response.text();
-        return JSON.parse(raw);
-      }catch(err){
-        lastError = err;
-        const msg = (err && err.message) ? err.message : '';
-        if(!RETRYABLE_ERROR_PATTERN.test(msg)){
-          // Örn. geçersiz API anahtarı gibi kalıcı bir hata — başka model denemenin anlamı yok.
-          throw err;
+    async function tryAllModels(genAI, prompt) {
+      let lastError = null;
+      for (let i = 0; i < MODEL_CANDIDATES.length; i++) {
+        const modelName = MODEL_CANDIDATES[i];
+        try {
+          const model = genAI.getGenerativeModel({
+            model: modelName,
+            systemInstruction: SYSTEM_INSTRUCTION,
+            generationConfig: RESPONSE_SCHEMA_CONFIG
+          });
+          const result = await model.generateContent(prompt);
+          const raw = result.response.text();
+          return JSON.parse(raw);
+        } catch (err) {
+          lastError = err;
+          const msg = (err && err.message) ? err.message : '';
+          if (!RETRYABLE_ERROR_PATTERN.test(msg)) {
+            // Örn. geçersiz API anahtarı gibi kalıcı bir hata — başka model denemenin anlamı yok.
+            throw err;
+          }
+          // Aksi halde (model yok / geçici yoğunluk) sıradaki modeli dene.
         }
-        // Aksi halde (model yok / geçici yoğunluk) sıradaki modeli dene.
       }
+      throw lastError || new Error("Hiçbir model yanıt vermedi.");
     }
-    throw lastError || new Error("Hiçbir model yanıt vermedi.");
-  }
 
-  // Diğer (klasik) script bu fonksiyonu window üzerinden çağırır.
-  window.__generateAIProjectIdea = async function(apiKey, { difficulty, category }){
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const prompt = `Zorluk seviyesi "${difficulty}" olan, "${category}" kategorisinde, daha önce çok fazla tekrarlanmamış yaratıcı bir yazılım proje fikri üret.`;
+    // Diğer (klasik) script bu fonksiyonu window üzerinden çağırır.
+    window.__generateAIProjectIdea = async function (apiKey, { difficulty, category }) {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const prompt = `Zorluk seviyesi "${difficulty}" olan, "${category}" kategorisinde, daha önce çok fazla tekrarlanmamış yaratıcı bir yazılım proje fikri üret.`;
 
-    try{
-      return await tryAllModels(genAI, prompt);
-    }catch(err){
-      const msg = (err && err.message) ? err.message : '';
-      // Tüm modeller geçici yoğunluk/kota hatası verdiyse, kısa bir bekleme
-      // sonrası listeyi bir kez daha baştan dene (tek seferlik ek deneme).
-      if(RETRYABLE_ERROR_PATTERN.test(msg)){
-        await sleep(1500);
+      try {
         return await tryAllModels(genAI, prompt);
+      } catch (err) {
+        const msg = (err && err.message) ? err.message : '';
+        // Tüm modeller geçici yoğunluk/kota hatası verdiyse, kısa bir bekleme
+        // sonrası listeyi bir kez daha baştan dene (tek seferlik ek deneme).
+        if (RETRYABLE_ERROR_PATTERN.test(msg)) {
+          await sleep(1500);
+          return await tryAllModels(genAI, prompt);
+        }
+        throw err;
       }
-      throw err;
-    }
-  };
-</script>
+    };
+  </script>
 
-<script>
-  const BUILT_IN_PROJECTS = [
-    {
-      id: 1,
-      name: "Yerel Ağda Dosya Paylaşım Merkezi",
-      category: "Web",
-      difficulty: "Orta",
-      description: "Aynı Wi-Fi ağındaki cihazlar arasında tarayıcı üzerinden hızlıca dosya sürükle-bırak ile paylaşan bir mini bulut.",
-      tech: ["Node.js", "Express", "WebSocket", "Multer"],
-      features: [
-        "Sürükle-bırak dosya yükleme",
-        "QR kod ile hızlı bağlantı paylaşımı",
-        "Gerçek zamanlı transfer ilerleme çubuğu",
-        "Otomatik cihaz keşfi (yerel ağ)"
-      ]
-    },
-    {
-      id: 2,
-      name: "Kişisel Dashboard",
-      category: "Web",
-      difficulty: "Başlangıç",
-      description: "Hava durumu, günlük görevler, hızlı notlar ve saat gibi widget'ları tek ekranda toplayan kişisel kontrol paneli.",
-      tech: ["HTML/CSS", "JavaScript", "LocalStorage", "Open-Meteo API"],
-      features: [
-        "Sürüklenebilir widget yerleşimi",
-        "Karanlık/aydınlık tema geçişi",
-        "Yapılacaklar listesi (kalıcı)",
-        "Anlık hava durumu kartı"
-      ]
-    },
-    {
-      id: 3,
-      name: "Filo Takip Mini Sistemi",
-      category: "Web",
-      difficulty: "İleri",
-      description: "Bir harita üzerinde birden fazla aracın simüle edilmiş konumunu gerçek zamanlı gösteren, rota ve durum takibi yapan panel.",
-      tech: ["Leaflet.js", "WebSocket", "Node.js", "Chart.js"],
-      features: [
-        "Canlı harita üzerinde araç ikonları",
-        "Araç bazlı hız/durum bilgisi",
-        "Geçmiş rota çizimi",
-        "Filtrelenebilir araç listesi paneli"
-      ]
-    },
-    {
-      id: 4,
-      name: "Infinite Canvas Not Uygulaması",
-      category: "Web",
-      difficulty: "İleri",
-      description: "Sonsuz kaydırılabilir ve yakınlaştırılabilir bir tuval üzerinde serbestçe not kartları, çizimler ve bağlantılar oluşturma aracı.",
-      tech: ["Canvas API / SVG", "JavaScript", "IndexedDB"],
-      features: [
-        "Pan (kaydırma) ve zoom desteği",
-        "Sürüklenebilir yapışkan notlar",
-        "Notlar arası bağlantı çizgileri",
-        "Otomatik kaydetme (IndexedDB)"
-      ]
-    },
-    {
-      id: 5,
-      name: "Gerçek Zamanlı Kod Paylaşım Odası",
-      category: "Web",
-      difficulty: "Orta",
-      description: "Birden fazla kullanıcının aynı kod bloğunu eşzamanlı düzenleyebildiği, sözdizimi vurgulamalı paylaşım odası.",
-      tech: ["WebSocket", "CodeMirror/Monaco", "Node.js"],
-      features: [
-        "Eşzamanlı çoklu kullanıcı düzenleme",
-        "Sözdizimi vurgulama (dil seçimi)",
-        "Oda linki ile hızlı katılım",
-        "Kullanıcı imleç konumlarını gösterme"
-      ]
-    },
-    {
-      id: 6,
-      name: "Kişisel Finans Takip Uygulaması",
-      category: "Mobil",
-      difficulty: "Başlangıç",
-      description: "Günlük gelir-gider kayıtlarını kategori bazlı takip eden, aylık harcama özetleri sunan basit mobil bütçe uygulaması.",
-      tech: ["React Native / Flutter", "SQLite", "Victory/Chart"],
-      features: [
-        "Gelir/gider ekleme formu",
-        "Kategoriye göre pasta grafik",
-        "Aylık bütçe limiti uyarısı",
-        "Yerel veri saklama (çevrimdışı çalışma)"
-      ]
-    },
-    {
-      id: 7,
-      name: "Sesli Not Alma ve Transkript Uygulaması",
-      category: "Mobil",
-      difficulty: "Orta",
-      description: "Sesli notlar kaydeden ve bunları otomatik olarak yazıya döken, aranabilir bir kişisel arşiv uygulaması.",
-      tech: ["React Native", "Web Speech API", "SQLite"],
-      features: [
-        "Ses kaydı başlat/durdur",
-        "Otomatik konuşmadan metne çeviri",
-        "Notlarda anahtar kelime arama",
-        "Etiketleme ve klasörleme"
-      ]
-    },
-    {
-      id: 8,
-      name: "Masaüstü Pomodoro & Odaklanma Takipçisi",
-      category: "Masaüstü",
-      difficulty: "Başlangıç",
-      description: "Sistem tepsisinde çalışan, odaklanma sürelerini istatistiklerle görselleştiren pomodoro zamanlayıcısı.",
-      tech: ["Electron / Tauri", "JavaScript", "Chart.js"],
-      features: [
-        "Özelleştirilebilir çalışma/mola süreleri",
-        "Sistem tepsisi bildirimleri",
-        "Günlük/haftalık odaklanma grafiği",
-        "Kısayol tuşlarıyla hızlı kontrol"
-      ]
-    },
-    {
-      id: 9,
-      name: "Otomatik Dosya Organizatörü",
-      category: "Masaüstü",
-      difficulty: "Orta",
-      description: "İndirilenler klasörünü izleyip dosyaları türüne, tarihine veya kurala göre otomatik klasörlere taşıyan araç.",
-      tech: ["Python", "Watchdog", "Tkinter/PyQt"],
-      features: [
-        "Klasör izleme (dosya sistem olayları)",
-        "Kural tabanlı otomatik taşıma",
-        "Özel kural oluşturma arayüzü",
-        "İşlem geçmişi ve geri alma"
-      ]
-    },
-    {
-      id: 10,
-      name: "2D Platform Oyunu",
-      category: "Oyun",
-      difficulty: "Orta",
-      description: "Zıplama, engellerden kaçma ve düşman mekanikleri içeren klasik yan kaydırmalı 2D platform oyunu.",
-      tech: ["JavaScript", "Canvas API", "Tiled Map Editor"],
-      features: [
-        "Karakter hareket ve zıplama fiziği",
-        "Çarpışma tespiti",
-        "Bölüm/seviye tasarımı (tile map)",
-        "Puan ve can sistemi"
-      ]
-    },
-    {
-      id: 11,
-      name: "Sonsuz Koşu Oyunu (Endless Runner)",
-      category: "Oyun",
-      difficulty: "Başlangıç",
-      description: "Otomatik ileri koşan karakterin engellerden kaçtığı, gittikçe hızlanan basit ve bağımlılık yapan bir tarayıcı oyunu.",
-      tech: ["HTML5 Canvas", "JavaScript"],
-      features: [
-        "Prosedürel engel üretimi",
-        "Artan zorluk/hız eğrisi",
-        "Yüksek skor kaydı (LocalStorage)",
-        "Dokunmatik/klavye kontrolleri"
-      ]
-    },
-    {
-      id: 12,
-      name: "Kendi Kısa URL Servisin",
-      category: "Backend/API",
-      difficulty: "Başlangıç",
-      description: "Uzun linkleri kısaltan, tıklanma istatistiklerini tutan minimal bir URL kısaltma servisi.",
-      tech: ["Node.js/Express", "MongoDB veya SQLite", "REST API"],
-      features: [
-        "Link kısaltma uç noktası (API)",
-        "Yönlendirme ve tıklanma sayacı",
-        "Özel kısa kod belirleme",
-        "Basit yönetim paneli"
-      ]
-    },
-    {
-      id: 13,
-      name: "Gerçek Zamanlı Sohbet Uygulaması",
-      category: "Web",
-      difficulty: "Orta",
-      description: "Oda bazlı, çoklu kullanıcı destekli, yazıyor göstergesi ve emoji tepkileri olan canlı mesajlaşma uygulaması.",
-      tech: ["Socket.io", "Node.js", "Express"],
-      features: [
-        "Oda oluşturma / katılma",
-        "'Yazıyor...' göstergesi",
-        "Mesajlara emoji tepkisi",
-        "Çevrimiçi kullanıcı listesi"
-      ]
-    },
-    {
-      id: 14,
-      name: "Alışkanlık Takip Uygulaması",
-      category: "Web",
-      difficulty: "Başlangıç",
-      description: "Günlük alışkanlıkları işaretleyip GitHub tarzı bir ısı haritasıyla süreklilik/seriyi görselleştiren takip uygulaması.",
-      tech: ["JavaScript", "LocalStorage", "CSS Grid"],
-      features: [
-        "Günlük alışkanlık işaretleme",
-        "Yıllık ısı haritası görünümü",
-        "Seri (streak) sayacı",
-        "Birden fazla alışkanlık yönetimi"
-      ]
-    },
-    {
-      id: 15,
-      name: "AI Destekli Kod Açıklayıcı",
-      category: "Backend/API",
-      difficulty: "İleri",
-      description: "Yapıştırılan kod bloğunu satır satır analiz edip sade bir dille açıklayan, potansiyel hataları işaretleyen araç.",
-      tech: ["Node.js", "LLM API", "Express", "Syntax Highlighter"],
-      features: [
-        "Kod yapıştırma ve dil algılama",
-        "Satır bazlı açıklama üretimi",
-        "Olası hata/uyarı tespiti",
-        "Açıklamaları dışa aktarma (Markdown)"
-      ]
-    },
-    {
-      id: 16,
-      name: "Masaüstü Widget Sistemi",
-      category: "Masaüstü",
-      difficulty: "İleri",
-      description: "Masaüstüne sabitlenebilen, her biri bağımsız çalışan (saat, RSS akışı, sistem izleyici gibi) küçük widget'lar barındıran platform.",
-      tech: ["Electron", "JavaScript", "Node.js"],
-      features: [
-        "Sürüklenebilir/yeniden boyutlandırılabilir widget'lar",
-        "Eklenti mimarisiyle yeni widget ekleme",
-        "Sistem kaynak izleme widget'ı",
-        "Widget ayarlarını kaydetme"
-      ]
-    }
-  ];
+  <script>
+    const BUILT_IN_PROJECTS = [
+      {
+        id: 1,
+        name: "Yerel Ağda Dosya Paylaşım Merkezi",
+        category: "Web",
+        difficulty: "Orta",
+        description: "Aynı Wi-Fi ağındaki cihazlar arasında tarayıcı üzerinden hızlıca dosya sürükle-bırak ile paylaşan bir mini bulut.",
+        tech: ["Node.js", "Express", "WebSocket", "Multer"],
+        features: [
+          "Sürükle-bırak dosya yükleme",
+          "QR kod ile hızlı bağlantı paylaşımı",
+          "Gerçek zamanlı transfer ilerleme çubuğu",
+          "Otomatik cihaz keşfi (yerel ağ)"
+        ]
+      },
+      {
+        id: 2,
+        name: "Kişisel Dashboard",
+        category: "Web",
+        difficulty: "Başlangıç",
+        description: "Hava durumu, günlük görevler, hızlı notlar ve saat gibi widget'ları tek ekranda toplayan kişisel kontrol paneli.",
+        tech: ["HTML/CSS", "JavaScript", "LocalStorage", "Open-Meteo API"],
+        features: [
+          "Sürüklenebilir widget yerleşimi",
+          "Karanlık/aydınlık tema geçişi",
+          "Yapılacaklar listesi (kalıcı)",
+          "Anlık hava durumu kartı"
+        ]
+      },
+      {
+        id: 3,
+        name: "Filo Takip Mini Sistemi",
+        category: "Web",
+        difficulty: "İleri",
+        description: "Bir harita üzerinde birden fazla aracın simüle edilmiş konumunu gerçek zamanlı gösteren, rota ve durum takibi yapan panel.",
+        tech: ["Leaflet.js", "WebSocket", "Node.js", "Chart.js"],
+        features: [
+          "Canlı harita üzerinde araç ikonları",
+          "Araç bazlı hız/durum bilgisi",
+          "Geçmiş rota çizimi",
+          "Filtrelenebilir araç listesi paneli"
+        ]
+      },
+      {
+        id: 4,
+        name: "Infinite Canvas Not Uygulaması",
+        category: "Web",
+        difficulty: "İleri",
+        description: "Sonsuz kaydırılabilir ve yakınlaştırılabilir bir tuval üzerinde serbestçe not kartları, çizimler ve bağlantılar oluşturma aracı.",
+        tech: ["Canvas API / SVG", "JavaScript", "IndexedDB"],
+        features: [
+          "Pan (kaydırma) ve zoom desteği",
+          "Sürüklenebilir yapışkan notlar",
+          "Notlar arası bağlantı çizgileri",
+          "Otomatik kaydetme (IndexedDB)"
+        ]
+      },
+      {
+        id: 5,
+        name: "Gerçek Zamanlı Kod Paylaşım Odası",
+        category: "Web",
+        difficulty: "Orta",
+        description: "Birden fazla kullanıcının aynı kod bloğunu eşzamanlı düzenleyebildiği, sözdizimi vurgulamalı paylaşım odası.",
+        tech: ["WebSocket", "CodeMirror/Monaco", "Node.js"],
+        features: [
+          "Eşzamanlı çoklu kullanıcı düzenleme",
+          "Sözdizimi vurgulama (dil seçimi)",
+          "Oda linki ile hızlı katılım",
+          "Kullanıcı imleç konumlarını gösterme"
+        ]
+      },
+      {
+        id: 6,
+        name: "Kişisel Finans Takip Uygulaması",
+        category: "Mobil",
+        difficulty: "Başlangıç",
+        description: "Günlük gelir-gider kayıtlarını kategori bazlı takip eden, aylık harcama özetleri sunan basit mobil bütçe uygulaması.",
+        tech: ["React Native / Flutter", "SQLite", "Victory/Chart"],
+        features: [
+          "Gelir/gider ekleme formu",
+          "Kategoriye göre pasta grafik",
+          "Aylık bütçe limiti uyarısı",
+          "Yerel veri saklama (çevrimdışı çalışma)"
+        ]
+      },
+      {
+        id: 7,
+        name: "Sesli Not Alma ve Transkript Uygulaması",
+        category: "Mobil",
+        difficulty: "Orta",
+        description: "Sesli notlar kaydeden ve bunları otomatik olarak yazıya döken, aranabilir bir kişisel arşiv uygulaması.",
+        tech: ["React Native", "Web Speech API", "SQLite"],
+        features: [
+          "Ses kaydı başlat/durdur",
+          "Otomatik konuşmadan metne çeviri",
+          "Notlarda anahtar kelime arama",
+          "Etiketleme ve klasörleme"
+        ]
+      },
+      {
+        id: 8,
+        name: "Masaüstü Pomodoro & Odaklanma Takipçisi",
+        category: "Masaüstü",
+        difficulty: "Başlangıç",
+        description: "Sistem tepsisinde çalışan, odaklanma sürelerini istatistiklerle görselleştiren pomodoro zamanlayıcısı.",
+        tech: ["Electron / Tauri", "JavaScript", "Chart.js"],
+        features: [
+          "Özelleştirilebilir çalışma/mola süreleri",
+          "Sistem tepsisi bildirimleri",
+          "Günlük/haftalık odaklanma grafiği",
+          "Kısayol tuşlarıyla hızlı kontrol"
+        ]
+      },
+      {
+        id: 9,
+        name: "Otomatik Dosya Organizatörü",
+        category: "Masaüstü",
+        difficulty: "Orta",
+        description: "İndirilenler klasörünü izleyip dosyaları türüne, tarihine veya kurala göre otomatik klasörlere taşıyan araç.",
+        tech: ["Python", "Watchdog", "Tkinter/PyQt"],
+        features: [
+          "Klasör izleme (dosya sistem olayları)",
+          "Kural tabanlı otomatik taşıma",
+          "Özel kural oluşturma arayüzü",
+          "İşlem geçmişi ve geri alma"
+        ]
+      },
+      {
+        id: 10,
+        name: "2D Platform Oyunu",
+        category: "Oyun",
+        difficulty: "Orta",
+        description: "Zıplama, engellerden kaçma ve düşman mekanikleri içeren klasik yan kaydırmalı 2D platform oyunu.",
+        tech: ["JavaScript", "Canvas API", "Tiled Map Editor"],
+        features: [
+          "Karakter hareket ve zıplama fiziği",
+          "Çarpışma tespiti",
+          "Bölüm/seviye tasarımı (tile map)",
+          "Puan ve can sistemi"
+        ]
+      },
+      {
+        id: 11,
+        name: "Sonsuz Koşu Oyunu (Endless Runner)",
+        category: "Oyun",
+        difficulty: "Başlangıç",
+        description: "Otomatik ileri koşan karakterin engellerden kaçtığı, gittikçe hızlanan basit ve bağımlılık yapan bir tarayıcı oyunu.",
+        tech: ["HTML5 Canvas", "JavaScript"],
+        features: [
+          "Prosedürel engel üretimi",
+          "Artan zorluk/hız eğrisi",
+          "Yüksek skor kaydı (LocalStorage)",
+          "Dokunmatik/klavye kontrolleri"
+        ]
+      },
+      {
+        id: 12,
+        name: "Kendi Kısa URL Servisin",
+        category: "Backend/API",
+        difficulty: "Başlangıç",
+        description: "Uzun linkleri kısaltan, tıklanma istatistiklerini tutan minimal bir URL kısaltma servisi.",
+        tech: ["Node.js/Express", "MongoDB veya SQLite", "REST API"],
+        features: [
+          "Link kısaltma uç noktası (API)",
+          "Yönlendirme ve tıklanma sayacı",
+          "Özel kısa kod belirleme",
+          "Basit yönetim paneli"
+        ]
+      },
+      {
+        id: 13,
+        name: "Gerçek Zamanlı Sohbet Uygulaması",
+        category: "Web",
+        difficulty: "Orta",
+        description: "Oda bazlı, çoklu kullanıcı destekli, yazıyor göstergesi ve emoji tepkileri olan canlı mesajlaşma uygulaması.",
+        tech: ["Socket.io", "Node.js", "Express"],
+        features: [
+          "Oda oluşturma / katılma",
+          "'Yazıyor...' göstergesi",
+          "Mesajlara emoji tepkisi",
+          "Çevrimiçi kullanıcı listesi"
+        ]
+      },
+      {
+        id: 14,
+        name: "Alışkanlık Takip Uygulaması",
+        category: "Web",
+        difficulty: "Başlangıç",
+        description: "Günlük alışkanlıkları işaretleyip GitHub tarzı bir ısı haritasıyla süreklilik/seriyi görselleştiren takip uygulaması.",
+        tech: ["JavaScript", "LocalStorage", "CSS Grid"],
+        features: [
+          "Günlük alışkanlık işaretleme",
+          "Yıllık ısı haritası görünümü",
+          "Seri (streak) sayacı",
+          "Birden fazla alışkanlık yönetimi"
+        ]
+      },
+      {
+        id: 15,
+        name: "AI Destekli Kod Açıklayıcı",
+        category: "Backend/API",
+        difficulty: "İleri",
+        description: "Yapıştırılan kod bloğunu satır satır analiz edip sade bir dille açıklayan, potansiyel hataları işaretleyen araç.",
+        tech: ["Node.js", "LLM API", "Express", "Syntax Highlighter"],
+        features: [
+          "Kod yapıştırma ve dil algılama",
+          "Satır bazlı açıklama üretimi",
+          "Olası hata/uyarı tespiti",
+          "Açıklamaları dışa aktarma (Markdown)"
+        ]
+      },
+      {
+        id: 16,
+        name: "Masaüstü Widget Sistemi",
+        category: "Masaüstü",
+        difficulty: "İleri",
+        description: "Masaüstüne sabitlenebilen, her biri bağımsız çalışan (saat, RSS akışı, sistem izleyici gibi) küçük widget'lar barındıran platform.",
+        tech: ["Electron", "JavaScript", "Node.js"],
+        features: [
+          "Sürüklenebilir/yeniden boyutlandırılabilir widget'lar",
+          "Eklenti mimarisiyle yeni widget ekleme",
+          "Sistem kaynak izleme widget'ı",
+          "Widget ayarlarını kaydetme"
+        ]
+      }
+    ];
 
-  // ---- LocalStorage anahtarları ----
-  const LS_CUSTOM_PROJECTS = 'pfb_custom_projects_v1';
-  const LS_STATUS_MAP = 'pfb_status_map_v1';
-  const LS_API_KEY = 'pfb_gemini_api_key_v1';
-  const LS_LIBRARY = 'pfb_library_ids_v1';
+    // ---- LocalStorage anahtarları ----
+    const LS_CUSTOM_PROJECTS = 'pfb_custom_projects_v1';
+    const LS_STATUS_MAP = 'pfb_status_map_v1';
+    const LS_API_KEY = 'pfb_gemini_api_key_v1';
+    const LS_LIBRARY = 'pfb_library_ids_v1';
 
-  const STATUS_OPTIONS = ['Fikir Aşamasında', 'Devam Ediyor', 'Tamamlandı'];
-  const STATUS_CLASS = {
-    'Fikir Aşamasında': 'status-idea',
-    'Devam Ediyor': 'status-progress',
-    'Tamamlandı': 'status-done'
-  };
-  const REAL_DIFFICULTIES = ['Başlangıç', 'Orta', 'İleri'];
+    const STATUS_OPTIONS = ['Fikir Aşamasında', 'Devam Ediyor', 'Tamamlandı'];
+    const STATUS_CLASS = {
+      'Fikir Aşamasında': 'status-idea',
+      'Devam Ediyor': 'status-progress',
+      'Tamamlandı': 'status-done'
+    };
+    const REAL_DIFFICULTIES = ['Başlangıç', 'Orta', 'İleri'];
 
-  const GOOGLE_ICON_SVG = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+    const GOOGLE_ICON_SVG = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
     <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
     <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.583-5.036-3.71H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
     <path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/>
     <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
   </svg>`;
 
-  function loadCustomProjects(){
-    try{
-      const raw = localStorage.getItem(LS_CUSTOM_PROJECTS);
-      return raw ? JSON.parse(raw) : [];
-    }catch(e){ return []; }
-  }
-  function saveCustomProjects(list){
-    localStorage.setItem(LS_CUSTOM_PROJECTS, JSON.stringify(list));
-  }
-  function loadStatusMap(){
-    try{
-      const raw = localStorage.getItem(LS_STATUS_MAP);
-      return raw ? JSON.parse(raw) : {};
-    }catch(e){ return {}; }
-  }
-  function saveStatusMap(map){
-    localStorage.setItem(LS_STATUS_MAP, JSON.stringify(map));
-  }
-  function loadApiKey(){
-    return localStorage.getItem(LS_API_KEY) || '';
-  }
-  function saveApiKey(key){
-    localStorage.setItem(LS_API_KEY, key);
-  }
-  function loadLibraryIds(){
-    try{
-      const raw = localStorage.getItem(LS_LIBRARY);
-      return raw ? JSON.parse(raw) : [];
-    }catch(e){ return []; }
-  }
-  function saveLibraryIdsToLS(list){
-    localStorage.setItem(LS_LIBRARY, JSON.stringify(list));
-  }
-
-  let customProjects = loadCustomProjects();
-  let statusMap = loadStatusMap();
-  let libraryIds = new Set(loadLibraryIds().map(String));
-  let currentUser = null;
-
-  function getAllProjects(){
-    return BUILT_IN_PROJECTS.concat(customProjects);
-  }
-  function getStatus(id){
-    return statusMap[id] || STATUS_OPTIONS[0];
-  }
-  function isInLibrary(id){
-    return libraryIds.has(String(id));
-  }
-
-  // ---- Bulut senkronizasyonu (giriş yapılmışsa) ----
-  let cloudSaveTimeout = null;
-  function setSyncStatus(state){
-    const el = document.getElementById('syncStatusText');
-    if(!el) return;
-    el.classList.remove('syncing', 'synced', 'error');
-    if(state === 'syncing'){
-      el.textContent = '☁️ Senkronize ediliyor...';
-      el.classList.add('syncing');
-    }else if(state === 'synced'){
-      el.textContent = '☁️ Senkronize ✓';
-      el.classList.add('synced');
-    }else if(state === 'error'){
-      el.textContent = '⚠️ Senkronizasyon hatası';
-      el.classList.add('error');
+    function loadCustomProjects() {
+      try {
+        const raw = localStorage.getItem(LS_CUSTOM_PROJECTS);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
     }
-  }
-  function syncToCloudDebounced(){
-    if(!currentUser || typeof window.__saveCloudData !== 'function') return;
-    clearTimeout(cloudSaveTimeout);
-    setSyncStatus('syncing');
-    cloudSaveTimeout = setTimeout(async () => {
-      try{
-        await window.__saveCloudData(currentUser.uid, {
-          customProjects,
-          statusMap,
-          libraryIds: Array.from(libraryIds)
+    function saveCustomProjects(list) {
+      localStorage.setItem(LS_CUSTOM_PROJECTS, JSON.stringify(list));
+    }
+    function loadStatusMap() {
+      try {
+        const raw = localStorage.getItem(LS_STATUS_MAP);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+    function saveStatusMap(map) {
+      localStorage.setItem(LS_STATUS_MAP, JSON.stringify(map));
+    }
+    function loadApiKey() {
+      return localStorage.getItem(LS_API_KEY) || '';
+    }
+    function saveApiKey(key) {
+      localStorage.setItem(LS_API_KEY, key);
+    }
+    function loadLibraryIds() {
+      try {
+        const raw = localStorage.getItem(LS_LIBRARY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    }
+    function saveLibraryIdsToLS(list) {
+      localStorage.setItem(LS_LIBRARY, JSON.stringify(list));
+    }
+
+    let customProjects = loadCustomProjects();
+    let statusMap = loadStatusMap();
+    let libraryIds = new Set(loadLibraryIds().map(String));
+    let currentUser = null;
+
+    function getAllProjects() {
+      return BUILT_IN_PROJECTS.concat(customProjects);
+    }
+    function getStatus(id) {
+      return statusMap[id] || STATUS_OPTIONS[0];
+    }
+    function isInLibrary(id) {
+      return libraryIds.has(String(id));
+    }
+
+    // ---- Bulut senkronizasyonu (giriş yapılmışsa) ----
+    let cloudSaveTimeout = null;
+    function setSyncStatus(state) {
+      const el = document.getElementById('syncStatusText');
+      if (!el) return;
+      el.classList.remove('syncing', 'synced', 'error');
+      if (state === 'syncing') {
+        el.textContent = '☁️ Senkronize ediliyor...';
+        el.classList.add('syncing');
+      } else if (state === 'synced') {
+        el.textContent = '☁️ Senkronize ✓';
+        el.classList.add('synced');
+      } else if (state === 'error') {
+        el.textContent = '⚠️ Senkronizasyon hatası';
+        el.classList.add('error');
+      }
+    }
+    function syncToCloudDebounced() {
+      if (!currentUser || typeof window.__saveCloudData !== 'function') return;
+      clearTimeout(cloudSaveTimeout);
+      setSyncStatus('syncing');
+      cloudSaveTimeout = setTimeout(async () => {
+        try {
+          await window.__saveCloudData(currentUser.uid, {
+            customProjects,
+            statusMap,
+            libraryIds: Array.from(libraryIds)
+          });
+          setSyncStatus('synced');
+        } catch (e) {
+          console.error(e);
+          setSyncStatus('error');
+        }
+      }, 600);
+    }
+    function persistCustomProjects() {
+      saveCustomProjects(customProjects);
+      syncToCloudDebounced();
+    }
+    function persistStatusMap() {
+      saveStatusMap(statusMap);
+      syncToCloudDebounced();
+    }
+    function persistLibrary() {
+      saveLibraryIdsToLS(Array.from(libraryIds));
+      syncToCloudDebounced();
+    }
+    function setStatus(id, value) {
+      statusMap[id] = value;
+      persistStatusMap();
+    }
+    function toggleLibrary(id) {
+      const key = String(id);
+      let nowSaved;
+      if (libraryIds.has(key)) {
+        libraryIds.delete(key);
+        nowSaved = false;
+      } else {
+        libraryIds.add(key);
+        nowSaved = true;
+      }
+      persistLibrary();
+      return nowSaved;
+    }
+    function updateLibraryCountUI() {
+      const el = document.getElementById('libraryCount');
+      if (el) el.textContent = libraryIds.size;
+    }
+
+    // ---- DOM referansları ----
+    const grid = document.getElementById('grid');
+    const resultsCount = document.getElementById('resultsCount');
+    const spotlight = document.getElementById('spotlight');
+    const difficultyFiltersEl = document.getElementById('difficultyFilters');
+    const categoryFiltersEl = document.getElementById('categoryFilters');
+    const searchInput = document.getElementById('searchInput');
+    const searchSection = document.getElementById('searchSection');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const viewToggle = document.getElementById('viewToggle');
+
+    const state = {
+      difficulty: 'Tümü',
+      category: 'Tümü',
+      search: '',
+      view: 'all'
+    };
+
+    const difficulties = ['Tümü', ...REAL_DIFFICULTIES];
+
+    function getCategories() {
+      return ['Tümü', ...Array.from(new Set(getAllProjects().map(p => p.category)))];
+    }
+
+    function buildChips(container, items, type) {
+      container.innerHTML = '';
+      items.forEach(item => {
+        const chip = document.createElement('div');
+        chip.className = 'chip' + (type === 'category' ? ' cat' : '');
+        chip.textContent = item;
+        if ((type === 'difficulty' && state.difficulty === item) ||
+          (type === 'category' && state.category === item)) {
+          chip.classList.add('active');
+        }
+        chip.addEventListener('click', () => {
+          if (type === 'difficulty') state.difficulty = item;
+          else state.category = item;
+          render();
         });
-        setSyncStatus('synced');
-      }catch(e){
-        console.error(e);
-        setSyncStatus('error');
-      }
-    }, 600);
-  }
-  function persistCustomProjects(){
-    saveCustomProjects(customProjects);
-    syncToCloudDebounced();
-  }
-  function persistStatusMap(){
-    saveStatusMap(statusMap);
-    syncToCloudDebounced();
-  }
-  function persistLibrary(){
-    saveLibraryIdsToLS(Array.from(libraryIds));
-    syncToCloudDebounced();
-  }
-  function setStatus(id, value){
-    statusMap[id] = value;
-    persistStatusMap();
-  }
-  function toggleLibrary(id){
-    const key = String(id);
-    let nowSaved;
-    if(libraryIds.has(key)){
-      libraryIds.delete(key);
-      nowSaved = false;
-    }else{
-      libraryIds.add(key);
-      nowSaved = true;
-    }
-    persistLibrary();
-    return nowSaved;
-  }
-  function updateLibraryCountUI(){
-    const el = document.getElementById('libraryCount');
-    if(el) el.textContent = libraryIds.size;
-  }
-
-  // ---- DOM referansları ----
-  const grid = document.getElementById('grid');
-  const resultsCount = document.getElementById('resultsCount');
-  const spotlight = document.getElementById('spotlight');
-  const difficultyFiltersEl = document.getElementById('difficultyFilters');
-  const categoryFiltersEl = document.getElementById('categoryFilters');
-  const searchInput = document.getElementById('searchInput');
-  const searchSection = document.getElementById('searchSection');
-  const clearSearchBtn = document.getElementById('clearSearchBtn');
-  const viewToggle = document.getElementById('viewToggle');
-
-  const state = {
-    difficulty: 'Tümü',
-    category: 'Tümü',
-    search: '',
-    view: 'all'
-  };
-
-  const difficulties = ['Tümü', ...REAL_DIFFICULTIES];
-
-  function getCategories(){
-    return ['Tümü', ...Array.from(new Set(getAllProjects().map(p => p.category)))];
-  }
-
-  function buildChips(container, items, type){
-    container.innerHTML = '';
-    items.forEach(item => {
-      const chip = document.createElement('div');
-      chip.className = 'chip' + (type === 'category' ? ' cat' : '');
-      chip.textContent = item;
-      if((type === 'difficulty' && state.difficulty === item) ||
-         (type === 'category' && state.category === item)){
-        chip.classList.add('active');
-      }
-      chip.addEventListener('click', () => {
-        if(type === 'difficulty') state.difficulty = item;
-        else state.category = item;
-        render();
+        container.appendChild(chip);
       });
-      container.appendChild(chip);
-    });
-  }
-
-  function normalize(str){
-    return (str || '').toLocaleLowerCase('tr-TR');
-  }
-
-  function matchesSearch(p, query){
-    if(!query) return true;
-    const q = normalize(query);
-    const haystack = normalize(p.name + ' ' + p.description + ' ' + (p.tech || []).join(' '));
-    return haystack.includes(q);
-  }
-
-  function cardHTML(p, spotlightMode, ribbonText){
-    const checklistItems = (p.features || []).map((f, i) =>
-      `<li data-idx="${i}"><span class="box"></span><span class="txt">${f}</span></li>`
-    ).join('');
-    const tagsHTML = (p.tech || []).map(t => `<span class="tag">${t}</span>`).join('');
-    const currentStatus = getStatus(p.id);
-    const statusOptionsHTML = STATUS_OPTIONS.map(s =>
-      `<option value="${s}" ${s === currentStatus ? 'selected' : ''}>${s}</option>`
-    ).join('');
-    let originBadge = '';
-    if(p.isCustom){
-      originBadge = p.source === 'ai'
-        ? '<span class="badge ai">🤖 AI</span>'
-        : '<span class="badge custom">Özel</span>';
     }
-    const saved = isInLibrary(p.id);
-    const bookmarkHTML = `<button class="bookmark-btn ${saved ? 'saved' : ''}" data-bookmark-id="${p.id}" title="${saved ? 'Kütüphaneden çıkar' : 'Kütüphaneye ekle'}">${saved ? '🔖' : '➕'}</button>`;
 
-    return `
+    function normalize(str) {
+      return (str || '').toLocaleLowerCase('tr-TR');
+    }
+
+    function matchesSearch(p, query) {
+      if (!query) return true;
+      const q = normalize(query);
+      const haystack = normalize(p.name + ' ' + p.description + ' ' + (p.tech || []).join(' '));
+      return haystack.includes(q);
+    }
+
+    function cardHTML(p, spotlightMode, ribbonText) {
+      const checklistItems = (p.features || []).map((f, i) =>
+        `<li data-idx="${i}"><span class="box"></span><span class="txt">${f}</span></li>`
+      ).join('');
+      const tagsHTML = (p.tech || []).map(t => `<span class="tag">${t}</span>`).join('');
+      const currentStatus = getStatus(p.id);
+      const statusOptionsHTML = STATUS_OPTIONS.map(s =>
+        `<option value="${s}" ${s === currentStatus ? 'selected' : ''}>${s}</option>`
+      ).join('');
+      let originBadge = '';
+      if (p.isCustom) {
+        originBadge = p.source === 'ai'
+          ? '<span class="badge ai">🤖 AI</span>'
+          : '<span class="badge custom">Özel</span>';
+      }
+      const saved = isInLibrary(p.id);
+      const bookmarkHTML = `<button class="bookmark-btn ${saved ? 'saved' : ''}" data-bookmark-id="${p.id}" title="${saved ? 'Kütüphaneden çıkar' : 'Kütüphaneye ekle'}">${saved ? '🔖' : '➕'}</button>`;
+
+      return `
       <div class="card" data-id="${p.id}">
         ${spotlightMode ? `<div class="ribbon">${ribbonText || '✨ Rastgele Seçildi'}</div>` : ''}
         <div class="card-top">
@@ -1581,10 +2038,10 @@
         </div>` : ''}
       </div>
     `;
-  }
+    }
 
-  function skeletonHTML(){
-    return `
+    function skeletonHTML() {
+      return `
       <div class="skeleton-card">
         <div class="ribbon">🤖 AI düşünüyor...</div>
         <div class="skel skel-title"></div>
@@ -1600,10 +2057,10 @@
         <div class="skel skel-line short"></div>
       </div>
     `;
-  }
+    }
 
-  function errorCardHTML(message){
-    return `
+    function errorCardHTML(message) {
+      return `
       <div class="error-card">
         <div class="emoji">⚠️</div>
         <strong>Fikir üretilemedi</strong>
@@ -1611,339 +2068,339 @@
         <button type="button" class="retry-btn" id="aiRetryBtn">Tekrar Dene</button>
       </div>
     `;
-  }
+    }
 
-  function attachCardHandlers(root){
-    root.querySelectorAll('.checklist li').forEach(li => {
-      li.addEventListener('click', () => li.classList.toggle('checked'));
-    });
-
-    root.querySelectorAll('.status-select').forEach(sel => {
-      sel.addEventListener('change', (e) => {
-        const idAttr = sel.getAttribute('data-status-id');
-        const numericId = Number(idAttr);
-        const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
-        const newStatus = e.target.value;
-        setStatus(realId, newStatus);
-
-        Object.values(STATUS_CLASS).forEach(c => sel.classList.remove(c));
-        sel.classList.add(STATUS_CLASS[newStatus]);
+    function attachCardHandlers(root) {
+      root.querySelectorAll('.checklist li').forEach(li => {
+        li.addEventListener('click', () => li.classList.toggle('checked'));
       });
-    });
 
-    root.querySelectorAll('.bookmark-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const idAttr = btn.getAttribute('data-bookmark-id');
-        const numericId = Number(idAttr);
-        const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
-        const nowSaved = toggleLibrary(realId);
-        btn.classList.toggle('saved', nowSaved);
-        btn.textContent = nowSaved ? '🔖' : '➕';
-        btn.title = nowSaved ? 'Kütüphaneden çıkar' : 'Kütüphaneye ekle';
-        updateLibraryCountUI();
-        if(state.view === 'library'){
-          render();
-        }
+      root.querySelectorAll('.status-select').forEach(sel => {
+        sel.addEventListener('change', (e) => {
+          const idAttr = sel.getAttribute('data-status-id');
+          const numericId = Number(idAttr);
+          const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
+          const newStatus = e.target.value;
+          setStatus(realId, newStatus);
+
+          Object.values(STATUS_CLASS).forEach(c => sel.classList.remove(c));
+          sel.classList.add(STATUS_CLASS[newStatus]);
+        });
       });
-    });
 
-    root.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-delete-id');
-        if(!confirm('Bu proje fikrini silmek istediğine emin misin?')) return;
-        customProjects = customProjects.filter(p => String(p.id) !== String(id));
-        persistCustomProjects();
-        delete statusMap[id];
-        persistStatusMap();
-        if(libraryIds.has(String(id))){
-          libraryIds.delete(String(id));
-          persistLibrary();
+      root.querySelectorAll('.bookmark-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idAttr = btn.getAttribute('data-bookmark-id');
+          const numericId = Number(idAttr);
+          const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
+          const nowSaved = toggleLibrary(realId);
+          btn.classList.toggle('saved', nowSaved);
+          btn.textContent = nowSaved ? '🔖' : '➕';
+          btn.title = nowSaved ? 'Kütüphaneden çıkar' : 'Kütüphaneye ekle';
           updateLibraryCountUI();
-        }
-        render();
-      });
-    });
-  }
-
-  function filteredProjects(){
-    return getAllProjects().filter(p =>
-      (state.difficulty === 'Tümü' || p.difficulty === state.difficulty) &&
-      (state.category === 'Tümü' || p.category === state.category) &&
-      (state.view !== 'library' || isInLibrary(p.id)) &&
-      matchesSearch(p, state.search)
-    );
-  }
-
-  function render(){
-    buildChips(difficultyFiltersEl, difficulties, 'difficulty');
-    buildChips(categoryFiltersEl, getCategories(), 'category');
-    updateLibraryCountUI();
-
-    const list = filteredProjects();
-    resultsCount.textContent = `${list.length} proje bulundu`;
-
-    if(list.length === 0){
-      const msg = state.view === 'library'
-        ? '📌 Kütüphanende henüz proje yok. Kartlardaki ➕ butonuna tıklayarak fikir kaydedebilirsin.'
-        : '😕 Bu filtrelere/aramaya uyan proje bulunamadı. Farklı bir kombinasyon dene.';
-      grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${msg}</div>`;
-      return;
-    }
-
-    grid.innerHTML = list.map(p => cardHTML(p, false)).join('');
-    attachCardHandlers(grid);
-  }
-
-  // ---- Görünüm anahtarı: Tüm Fikirler / Kütüphanem ----
-  viewToggle.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-view]');
-    if(!btn) return;
-    state.view = btn.getAttribute('data-view');
-    viewToggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
-    render();
-  });
-
-  // ---- Arama ----
-  searchInput.addEventListener('input', () => {
-    state.search = searchInput.value;
-    searchSection.classList.toggle('has-value', state.search.length > 0);
-    render();
-  });
-  clearSearchBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    state.search = '';
-    searchSection.classList.remove('has-value');
-    render();
-    searchInput.focus();
-  });
-
-  // ---- Rastgele proje ----
-  const randomBtn = document.getElementById('randomBtn');
-  randomBtn.addEventListener('click', () => {
-    const pool = filteredProjects().length ? filteredProjects() : getAllProjects();
-    const pick = pool[Math.floor(Math.random() * pool.length)];
-
-    spotlight.classList.add('show');
-    spotlight.innerHTML = cardHTML(pick, true, '✨ Rastgele Seçildi');
-    const cardEl = spotlight.querySelector('.card');
-    cardEl.classList.add('shuffling');
-    attachCardHandlers(spotlight);
-
-    setTimeout(() => cardEl.classList.remove('shuffling'), 460);
-    spotlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  // ---- "Yeni Fikir Ekle" modalı ----
-  const modalOverlay = document.getElementById('modalOverlay');
-  const addIdeaBtn = document.getElementById('addIdeaBtn');
-  const modalCloseBtn = document.getElementById('modalCloseBtn');
-  const cancelIdeaBtn = document.getElementById('cancelIdeaBtn');
-  const ideaForm = document.getElementById('ideaForm');
-  const categoryList = document.getElementById('categoryList');
-
-  function openModal(){
-    categoryList.innerHTML = getCategories()
-      .filter(c => c !== 'Tümü')
-      .map(c => `<option value="${c}"></option>`).join('');
-    modalOverlay.classList.add('show');
-    document.getElementById('f-name').focus();
-  }
-  function closeModal(){
-    modalOverlay.classList.remove('show');
-    ideaForm.reset();
-  }
-
-  addIdeaBtn.addEventListener('click', openModal);
-  modalCloseBtn.addEventListener('click', closeModal);
-  cancelIdeaBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
-    if(e.target === modalOverlay) closeModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape'){
-      if(modalOverlay.classList.contains('show')) closeModal();
-    }
-  });
-
-  ideaForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById('f-name').value.trim();
-    const category = document.getElementById('f-category').value.trim() || 'Diğer';
-    const difficulty = document.getElementById('f-difficulty').value;
-    const description = document.getElementById('f-description').value.trim();
-    const techRaw = document.getElementById('f-tech').value.trim();
-    const featuresRaw = document.getElementById('f-features').value.trim();
-
-    if(!name || !description) return;
-
-    const tech = techRaw ? techRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-    const features = featuresRaw ? featuresRaw.split('\n').map(f => f.trim()).filter(Boolean) : [];
-
-    const newProject = {
-      id: 'custom-' + Date.now(),
-      name, category, difficulty, description, tech, features,
-      isCustom: true
-    };
-
-    customProjects.push(newProject);
-    persistCustomProjects();
-    closeModal();
-    render();
-  });
-
-  // ---- Gemini API Key ayarları ----
-  const apiToggleBtn = document.getElementById('apiToggleBtn');
-  const apiToggleLabel = document.getElementById('apiToggleLabel');
-  const apiPanel = document.getElementById('apiPanel');
-  const apiKeyInput = document.getElementById('apiKeyInput');
-  const toggleKeyVisibility = document.getElementById('toggleKeyVisibility');
-  const apiSavedMsg = document.getElementById('apiSavedMsg');
-
-  function refreshApiToggleUI(){
-    const key = loadApiKey();
-    if(key){
-      apiToggleBtn.classList.add('connected');
-      apiToggleLabel.textContent = '🔑 API Key Ayarlı ✓ (Düzenle)';
-    }else{
-      apiToggleBtn.classList.remove('connected');
-      apiToggleLabel.textContent = '🔑 Gemini API Key Ayarla';
-    }
-  }
-
-  apiKeyInput.value = loadApiKey();
-  refreshApiToggleUI();
-
-  apiToggleBtn.addEventListener('click', () => {
-    apiPanel.classList.toggle('open');
-    if(apiPanel.classList.contains('open')) apiKeyInput.focus();
-  });
-
-  toggleKeyVisibility.addEventListener('click', () => {
-    const isPwd = apiKeyInput.type === 'password';
-    apiKeyInput.type = isPwd ? 'text' : 'password';
-    toggleKeyVisibility.textContent = isPwd ? '🙈' : '👁';
-  });
-
-  let apiSaveTimeout = null;
-  apiKeyInput.addEventListener('input', () => {
-    clearTimeout(apiSaveTimeout);
-    apiSaveTimeout = setTimeout(() => {
-      saveApiKey(apiKeyInput.value.trim());
-      refreshApiToggleUI();
-      apiSavedMsg.classList.add('show');
-      setTimeout(() => apiSavedMsg.classList.remove('show'), 1500);
-    }, 350);
-  });
-
-  // ---- AI ile Yeni Fikir Üret ----
-  const aiBtn = document.getElementById('aiBtn');
-  const aiStatusMsg = document.getElementById('aiStatusMsg');
-
-  function setAiStatus(text, type){
-    aiStatusMsg.textContent = text || '';
-    aiStatusMsg.className = 'ai-status' + (type ? ' ' + type : '');
-  }
-
-  async function runAiGeneration(){
-    const apiKey = loadApiKey().trim();
-    if(!apiKey){
-      apiPanel.classList.add('open');
-      apiToggleBtn.classList.remove('connected');
-      setAiStatus('Önce yukarıdan Gemini API anahtarını gir.', 'error');
-      apiKeyInput.focus();
-      apiKeyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
-    if(typeof window.__generateAIProjectIdea !== 'function'){
-      setAiStatus('AI modülü henüz yüklenmedi, birkaç saniye sonra tekrar dene.', 'error');
-      return;
-    }
-
-    const chosenDifficulty = state.difficulty !== 'Tümü'
-      ? state.difficulty
-      : REAL_DIFFICULTIES[Math.floor(Math.random() * REAL_DIFFICULTIES.length)];
-    const existingCats = getCategories().filter(c => c !== 'Tümü');
-    const chosenCategory = state.category !== 'Tümü'
-      ? state.category
-      : (existingCats[Math.floor(Math.random() * existingCats.length)] || 'Web');
-
-    aiBtn.disabled = true;
-    const originalBtnHTML = aiBtn.innerHTML;
-    aiBtn.innerHTML = '<span class="spinner"></span>Üretiliyor...';
-    setAiStatus(`Gemini "${chosenCategory}" / "${chosenDifficulty}" için fikir üretiyor...`, 'info');
-
-    spotlight.classList.add('show');
-    spotlight.innerHTML = skeletonHTML();
-    spotlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    try{
-      const data = await window.__generateAIProjectIdea(apiKey, {
-        difficulty: chosenDifficulty,
-        category: chosenCategory
+          if (state.view === 'library') {
+            render();
+          }
+        });
       });
 
-      if(!data || !data.name || !data.description){
-        throw new Error('AI beklenmeyen bir formatta cevap verdi.');
+      root.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-delete-id');
+          if (!confirm('Bu proje fikrini silmek istediğine emin misin?')) return;
+          customProjects = customProjects.filter(p => String(p.id) !== String(id));
+          persistCustomProjects();
+          delete statusMap[id];
+          persistStatusMap();
+          if (libraryIds.has(String(id))) {
+            libraryIds.delete(String(id));
+            persistLibrary();
+            updateLibraryCountUI();
+          }
+          render();
+        });
+      });
+    }
+
+    function filteredProjects() {
+      return getAllProjects().filter(p =>
+        (state.difficulty === 'Tümü' || p.difficulty === state.difficulty) &&
+        (state.category === 'Tümü' || p.category === state.category) &&
+        (state.view !== 'library' || isInLibrary(p.id)) &&
+        matchesSearch(p, state.search)
+      );
+    }
+
+    function render() {
+      buildChips(difficultyFiltersEl, difficulties, 'difficulty');
+      buildChips(categoryFiltersEl, getCategories(), 'category');
+      updateLibraryCountUI();
+
+      const list = filteredProjects();
+      resultsCount.textContent = `${list.length} proje bulundu`;
+
+      if (list.length === 0) {
+        const msg = state.view === 'library'
+          ? '📌 Kütüphanende henüz proje yok. Kartlardaki ➕ butonuna tıklayarak fikir kaydedebilirsin.'
+          : '😕 Bu filtrelere/aramaya uyan proje bulunamadı. Farklı bir kombinasyon dene.';
+        grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${msg}</div>`;
+        return;
       }
 
+      grid.innerHTML = list.map(p => cardHTML(p, false)).join('');
+      attachCardHandlers(grid);
+    }
+
+    // ---- Görünüm anahtarı: Tüm Fikirler / Kütüphanem ----
+    viewToggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-view]');
+      if (!btn) return;
+      state.view = btn.getAttribute('data-view');
+      viewToggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+      render();
+    });
+
+    // ---- Arama ----
+    searchInput.addEventListener('input', () => {
+      state.search = searchInput.value;
+      searchSection.classList.toggle('has-value', state.search.length > 0);
+      render();
+    });
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      state.search = '';
+      searchSection.classList.remove('has-value');
+      render();
+      searchInput.focus();
+    });
+
+    // ---- Rastgele proje ----
+    const randomBtn = document.getElementById('randomBtn');
+    randomBtn.addEventListener('click', () => {
+      const pool = filteredProjects().length ? filteredProjects() : getAllProjects();
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+
+      spotlight.classList.add('show');
+      spotlight.innerHTML = cardHTML(pick, true, '✨ Rastgele Seçildi');
+      const cardEl = spotlight.querySelector('.card');
+      cardEl.classList.add('shuffling');
+      attachCardHandlers(spotlight);
+
+      setTimeout(() => cardEl.classList.remove('shuffling'), 460);
+      spotlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    // ---- "Yeni Fikir Ekle" modalı ----
+    const modalOverlay = document.getElementById('modalOverlay');
+    const addIdeaBtn = document.getElementById('addIdeaBtn');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const cancelIdeaBtn = document.getElementById('cancelIdeaBtn');
+    const ideaForm = document.getElementById('ideaForm');
+    const categoryList = document.getElementById('categoryList');
+
+    function openModal() {
+      categoryList.innerHTML = getCategories()
+        .filter(c => c !== 'Tümü')
+        .map(c => `<option value="${c}"></option>`).join('');
+      modalOverlay.classList.add('show');
+      document.getElementById('f-name').focus();
+    }
+    function closeModal() {
+      modalOverlay.classList.remove('show');
+      ideaForm.reset();
+    }
+
+    addIdeaBtn.addEventListener('click', openModal);
+    modalCloseBtn.addEventListener('click', closeModal);
+    cancelIdeaBtn.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (modalOverlay.classList.contains('show')) closeModal();
+      }
+    });
+
+    ideaForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('f-name').value.trim();
+      const category = document.getElementById('f-category').value.trim() || 'Diğer';
+      const difficulty = document.getElementById('f-difficulty').value;
+      const description = document.getElementById('f-description').value.trim();
+      const techRaw = document.getElementById('f-tech').value.trim();
+      const featuresRaw = document.getElementById('f-features').value.trim();
+
+      if (!name || !description) return;
+
+      const tech = techRaw ? techRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+      const features = featuresRaw ? featuresRaw.split('\n').map(f => f.trim()).filter(Boolean) : [];
+
       const newProject = {
-        id: 'ai-' + Date.now(),
-        name: data.name,
-        category: chosenCategory,
-        difficulty: chosenDifficulty,
-        description: data.description,
-        tech: Array.isArray(data.tech) ? data.tech : [],
-        features: Array.isArray(data.features) ? data.features : [],
-        isCustom: true,
-        source: 'ai'
+        id: 'custom-' + Date.now(),
+        name, category, difficulty, description, tech, features,
+        isCustom: true
       };
 
       customProjects.push(newProject);
       persistCustomProjects();
-
-      spotlight.innerHTML = cardHTML(newProject, true, '🤖 AI Tarafından Üretildi');
-      const cardEl = spotlight.querySelector('.card');
-      cardEl.classList.add('shuffling');
-      attachCardHandlers(spotlight);
-      setTimeout(() => cardEl.classList.remove('shuffling'), 460);
-
-      setAiStatus('Yeni fikir üretildi ve havuza eklendi ✓ İstersen 🔖 ile kütüphanene de ekleyebilirsin.', 'success');
+      closeModal();
       render();
-    }catch(err){
-      console.error(err);
-      const msg = (err && err.message) ? err.message : 'Bilinmeyen bir hata oluştu.';
-      spotlight.innerHTML = errorCardHTML(msg);
-      const retryBtn = document.getElementById('aiRetryBtn');
-      if(retryBtn) retryBtn.addEventListener('click', runAiGeneration);
-      setAiStatus('Fikir üretilemedi: ' + msg, 'error');
-    }finally{
-      aiBtn.disabled = false;
-      aiBtn.innerHTML = originalBtnHTML;
+    });
+
+    // ---- Gemini API Key ayarları ----
+    const apiToggleBtn = document.getElementById('apiToggleBtn');
+    const apiToggleLabel = document.getElementById('apiToggleLabel');
+    const apiPanel = document.getElementById('apiPanel');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const toggleKeyVisibility = document.getElementById('toggleKeyVisibility');
+    const apiSavedMsg = document.getElementById('apiSavedMsg');
+
+    function refreshApiToggleUI() {
+      const key = loadApiKey();
+      if (key) {
+        apiToggleBtn.classList.add('connected');
+        apiToggleLabel.textContent = '🔑 API Key Ayarlı ✓ (Düzenle)';
+      } else {
+        apiToggleBtn.classList.remove('connected');
+        apiToggleLabel.textContent = '🔑 Gemini API Key Ayarla';
+      }
     }
-  }
 
-  aiBtn.addEventListener('click', runAiGeneration);
+    apiKeyInput.value = loadApiKey();
+    refreshApiToggleUI();
 
-  // ---- Google ile hesap girişi ----
-  const authSection = document.getElementById('authSection');
-  const authErrorMsg = document.getElementById('authErrorMsg');
+    apiToggleBtn.addEventListener('click', () => {
+      apiPanel.classList.toggle('open');
+      if (apiPanel.classList.contains('open')) apiKeyInput.focus();
+    });
 
-  function setAuthError(msg){
-    authErrorMsg.textContent = msg || '';
-  }
+    toggleKeyVisibility.addEventListener('click', () => {
+      const isPwd = apiKeyInput.type === 'password';
+      apiKeyInput.type = isPwd ? 'text' : 'password';
+      toggleKeyVisibility.textContent = isPwd ? '🙈' : '👁';
+    });
 
-  function renderAuthUI(){
-    if(currentUser){
-      const photo = currentUser.photoURL || '';
-      const name = currentUser.displayName || currentUser.email || 'Kullanıcı';
-      const initial = name.charAt(0).toUpperCase();
-      authSection.innerHTML = `
+    let apiSaveTimeout = null;
+    apiKeyInput.addEventListener('input', () => {
+      clearTimeout(apiSaveTimeout);
+      apiSaveTimeout = setTimeout(() => {
+        saveApiKey(apiKeyInput.value.trim());
+        refreshApiToggleUI();
+        apiSavedMsg.classList.add('show');
+        setTimeout(() => apiSavedMsg.classList.remove('show'), 1500);
+      }, 350);
+    });
+
+    // ---- AI ile Yeni Fikir Üret ----
+    const aiBtn = document.getElementById('aiBtn');
+    const aiStatusMsg = document.getElementById('aiStatusMsg');
+
+    function setAiStatus(text, type) {
+      aiStatusMsg.textContent = text || '';
+      aiStatusMsg.className = 'ai-status' + (type ? ' ' + type : '');
+    }
+
+    async function runAiGeneration() {
+      const apiKey = loadApiKey().trim();
+      if (!apiKey) {
+        apiPanel.classList.add('open');
+        apiToggleBtn.classList.remove('connected');
+        setAiStatus('Önce yukarıdan Gemini API anahtarını gir.', 'error');
+        apiKeyInput.focus();
+        apiKeyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      if (typeof window.__generateAIProjectIdea !== 'function') {
+        setAiStatus('AI modülü henüz yüklenmedi, birkaç saniye sonra tekrar dene.', 'error');
+        return;
+      }
+
+      const chosenDifficulty = state.difficulty !== 'Tümü'
+        ? state.difficulty
+        : REAL_DIFFICULTIES[Math.floor(Math.random() * REAL_DIFFICULTIES.length)];
+      const existingCats = getCategories().filter(c => c !== 'Tümü');
+      const chosenCategory = state.category !== 'Tümü'
+        ? state.category
+        : (existingCats[Math.floor(Math.random() * existingCats.length)] || 'Web');
+
+      aiBtn.disabled = true;
+      const originalBtnHTML = aiBtn.innerHTML;
+      aiBtn.innerHTML = '<span class="spinner"></span>Üretiliyor...';
+      setAiStatus(`Gemini "${chosenCategory}" / "${chosenDifficulty}" için fikir üretiyor...`, 'info');
+
+      spotlight.classList.add('show');
+      spotlight.innerHTML = skeletonHTML();
+      spotlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      try {
+        const data = await window.__generateAIProjectIdea(apiKey, {
+          difficulty: chosenDifficulty,
+          category: chosenCategory
+        });
+
+        if (!data || !data.name || !data.description) {
+          throw new Error('AI beklenmeyen bir formatta cevap verdi.');
+        }
+
+        const newProject = {
+          id: 'ai-' + Date.now(),
+          name: data.name,
+          category: chosenCategory,
+          difficulty: chosenDifficulty,
+          description: data.description,
+          tech: Array.isArray(data.tech) ? data.tech : [],
+          features: Array.isArray(data.features) ? data.features : [],
+          isCustom: true,
+          source: 'ai'
+        };
+
+        customProjects.push(newProject);
+        persistCustomProjects();
+
+        spotlight.innerHTML = cardHTML(newProject, true, '🤖 AI Tarafından Üretildi');
+        const cardEl = spotlight.querySelector('.card');
+        cardEl.classList.add('shuffling');
+        attachCardHandlers(spotlight);
+        setTimeout(() => cardEl.classList.remove('shuffling'), 460);
+
+        setAiStatus('Yeni fikir üretildi ve havuza eklendi ✓ İstersen 🔖 ile kütüphanene de ekleyebilirsin.', 'success');
+        render();
+      } catch (err) {
+        console.error(err);
+        const msg = (err && err.message) ? err.message : 'Bilinmeyen bir hata oluştu.';
+        spotlight.innerHTML = errorCardHTML(msg);
+        const retryBtn = document.getElementById('aiRetryBtn');
+        if (retryBtn) retryBtn.addEventListener('click', runAiGeneration);
+        setAiStatus('Fikir üretilemedi: ' + msg, 'error');
+      } finally {
+        aiBtn.disabled = false;
+        aiBtn.innerHTML = originalBtnHTML;
+      }
+    }
+
+    aiBtn.addEventListener('click', runAiGeneration);
+
+    // ---- Google ile hesap girişi ----
+    const authSection = document.getElementById('authSection');
+    const authErrorMsg = document.getElementById('authErrorMsg');
+
+    function setAuthError(msg) {
+      authErrorMsg.textContent = msg || '';
+    }
+
+    function renderAuthUI() {
+      if (currentUser) {
+        const photo = currentUser.photoURL || '';
+        const name = currentUser.displayName || currentUser.email || 'Kullanıcı';
+        const initial = name.charAt(0).toUpperCase();
+        authSection.innerHTML = `
         <div class="auth-profile">
           <div class="who">
             ${photo
-              ? `<img class="avatar" src="${photo}" alt="">`
-              : `<div class="avatar fallback">${initial}</div>`}
+            ? `<img class="avatar" src="${photo}" alt="">`
+            : `<div class="avatar fallback">${initial}</div>`}
             <div>
               <div class="name">${name}</div>
               <div class="sync-status" id="syncStatusText">☁️ Senkronize ✓</div>
@@ -1952,96 +2409,97 @@
           <button class="signout-btn" id="signOutBtn" type="button">Çıkış Yap</button>
         </div>
       `;
-    }else{
-      authSection.innerHTML = `
+      } else {
+        authSection.innerHTML = `
         <button class="auth-btn" id="googleSignInBtn" type="button">
           ${GOOGLE_ICON_SVG}
           <span>Google ile Giriş Yap</span>
         </button>
       `;
-    }
-  }
-
-  authSection.addEventListener('click', async (e) => {
-    if(e.target.closest('#googleSignInBtn')){
-      setAuthError('');
-      try{
-        await window.__signInWithGoogle();
-      }catch(err){
-        console.error(err);
-        setAuthError('Giriş başarısız: ' + ((err && err.message) || 'bilinmeyen hata'));
       }
     }
-    if(e.target.closest('#signOutBtn')){
-      try{
-        await window.__signOutFirebase();
-      }catch(err){
-        console.error(err);
-      }
-    }
-  });
 
-  async function handleAuthStateChange(user){
-    currentUser = user;
-    renderAuthUI();
-    setAuthError('');
-
-    if(user && typeof window.__loadCloudData === 'function'){
-      setSyncStatus('syncing');
-      try{
-        const cloudData = await window.__loadCloudData(user.uid);
-        if(cloudData){
-          // Buluttaki veri varsa, o kazanır (diğer cihazdaki en güncel hal).
-          customProjects = Array.isArray(cloudData.customProjects) ? cloudData.customProjects : [];
-          statusMap = (cloudData.statusMap && typeof cloudData.statusMap === 'object') ? cloudData.statusMap : {};
-          libraryIds = new Set((Array.isArray(cloudData.libraryIds) ? cloudData.libraryIds : []).map(String));
-          saveCustomProjects(customProjects);
-          saveStatusMap(statusMap);
-          saveLibraryIdsToLS(Array.from(libraryIds));
-        }else{
-          // İlk giriş: mevcut yerel veriyi buluta yükle.
-          await window.__saveCloudData(user.uid, {
-            customProjects,
-            statusMap,
-            libraryIds: Array.from(libraryIds)
-          });
+    authSection.addEventListener('click', async (e) => {
+      if (e.target.closest('#googleSignInBtn')) {
+        setAuthError('');
+        try {
+          await window.__signInWithGoogle();
+        } catch (err) {
+          console.error(err);
+          setAuthError('Giriş başarısız: ' + ((err && err.message) || 'bilinmeyen hata'));
         }
-        setSyncStatus('synced');
-        render();
-      }catch(e){
-        console.error(e);
-        setSyncStatus('error');
       }
-    }
-  }
-
-  function waitForFn(name, tries){
-    return new Promise((resolve) => {
-      let count = 0;
-      const iv = setInterval(() => {
-        count++;
-        if(typeof window[name] === 'function' || count > (tries || 50)){
-          clearInterval(iv);
-          resolve(typeof window[name] === 'function');
+      if (e.target.closest('#signOutBtn')) {
+        try {
+          await window.__signOutFirebase();
+        } catch (err) {
+          console.error(err);
         }
-      }, 100);
+      }
     });
-  }
 
-  (async function initAuth(){
-    renderAuthUI();
-    const ready = await waitForFn('__onAuthChange', 50);
-    if(ready){
-      window.__onAuthChange(handleAuthStateChange);
-    }else{
-      console.warn('Firebase modülü yüklenemedi.');
-    }
-    if(window.__firebaseConfigured === false){
-      setAuthError('Firebase yapılandırılmamış: index.html içindeki firebaseConfig alanını doldurman gerekiyor.');
-    }
-  })();
+    async function handleAuthStateChange(user) {
+      currentUser = user;
+      renderAuthUI();
+      setAuthError('');
 
-  render();
-</script>
+      if (user && typeof window.__loadCloudData === 'function') {
+        setSyncStatus('syncing');
+        try {
+          const cloudData = await window.__loadCloudData(user.uid);
+          if (cloudData) {
+            // Buluttaki veri varsa, o kazanır (diğer cihazdaki en güncel hal).
+            customProjects = Array.isArray(cloudData.customProjects) ? cloudData.customProjects : [];
+            statusMap = (cloudData.statusMap && typeof cloudData.statusMap === 'object') ? cloudData.statusMap : {};
+            libraryIds = new Set((Array.isArray(cloudData.libraryIds) ? cloudData.libraryIds : []).map(String));
+            saveCustomProjects(customProjects);
+            saveStatusMap(statusMap);
+            saveLibraryIdsToLS(Array.from(libraryIds));
+          } else {
+            // İlk giriş: mevcut yerel veriyi buluta yükle.
+            await window.__saveCloudData(user.uid, {
+              customProjects,
+              statusMap,
+              libraryIds: Array.from(libraryIds)
+            });
+          }
+          setSyncStatus('synced');
+          render();
+        } catch (e) {
+          console.error(e);
+          setSyncStatus('error');
+        }
+      }
+    }
+
+    function waitForFn(name, tries) {
+      return new Promise((resolve) => {
+        let count = 0;
+        const iv = setInterval(() => {
+          count++;
+          if (typeof window[name] === 'function' || count > (tries || 50)) {
+            clearInterval(iv);
+            resolve(typeof window[name] === 'function');
+          }
+        }, 100);
+      });
+    }
+
+    (async function initAuth() {
+      renderAuthUI();
+      const ready = await waitForFn('__onAuthChange', 50);
+      if (ready) {
+        window.__onAuthChange(handleAuthStateChange);
+      } else {
+        console.warn('Firebase modülü yüklenemedi.');
+      }
+      if (window.__firebaseConfigured === false) {
+        setAuthError('Firebase yapılandırılmamış: index.html içindeki firebaseConfig alanını doldurman gerekiyor.');
+      }
+    })();
+
+    render();
+  </script>
 </body>
+
 </html>
