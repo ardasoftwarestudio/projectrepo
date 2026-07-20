@@ -1092,12 +1092,14 @@
   // Google modelleri zaman zaman kullanımdan kaldırıyor / yeni hesaplara kapatıyor,
   // ayrıca bazen geçici olarak "yoğun talep" (503) hatası verebiliyor.
   // Bu yüzden tek bir model adına bağlı kalmak yerine, sırayla bir liste deniyoruz.
-  // "gemini-flash-latest" Google'ın her zaman güncel flash modelini gösteren takma adıdır.
+  // Liste 2026-07 itibarıyla Google'ın güncel model dokümantasyonuna göre güncellendi:
+  // "gemini-2.5-flash-lite" yeni hesaplara kapatıldığı için listeden çıkarıldı,
+  // yerine güncel nesil "gemini-3.1-flash-lite" eklendi.
   const MODEL_CANDIDATES = [
     "gemini-flash-latest",
-    "gemini-2.5-flash",
     "gemini-3.5-flash",
-    "gemini-2.5-flash-lite"
+    "gemini-2.5-flash",
+    "gemini-3.1-flash-lite"
   ];
 
   // Bu hata türlerinde başka bir modeli / tekrar denemeyi mantıklı buluyoruz:
