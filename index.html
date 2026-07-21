@@ -1307,6 +1307,120 @@
   .guide-step.done .step-text{text-decoration:line-through;}
   .guide-step-empty{color:var(--text-dim);font-size:.88rem;padding:10px 0;}
 
+  /* 🗺️ Görsel Yol Haritası (Node Graph) */
+  .roadmap-graph{
+    display:flex;
+    flex-direction:column;
+    margin:20px 0;
+  }
+  .roadmap-node{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 16px;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:14px;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .roadmap-node:hover{border-color:var(--accent-2);}
+  .roadmap-node.open{
+    border-color:var(--accent-2);
+    box-shadow:0 0 22px rgba(34,211,238,.18);
+    border-bottom-left-radius:0;
+    border-bottom-right-radius:0;
+  }
+  .roadmap-node.done{border-color:rgba(63,185,80,.5);background:rgba(63,185,80,.08);}
+  .roadmap-node-icon{
+    width:42px;height:42px;
+    border-radius:50%;
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.15rem;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 0 16px rgba(124,92,255,.4);
+    transition:all .2s ease;
+  }
+  .roadmap-node.done .roadmap-node-icon{
+    background:linear-gradient(135deg,#3fb950,#22d3ee);
+    box-shadow:0 0 16px rgba(63,185,80,.5);
+  }
+  .roadmap-node-text{flex:1;min-width:0;}
+  .roadmap-node-title{font-weight:700;font-size:.95rem;}
+  .roadmap-node.done .roadmap-node-title{color:var(--green);}
+  .roadmap-node-sub{font-size:.74rem;color:var(--text-dim);margin-top:2px;}
+  .roadmap-node-check{
+    width:30px;height:30px;
+    border-radius:50%;
+    border:2px solid var(--border);
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.85rem;
+    color:transparent;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .roadmap-node-check:hover{border-color:var(--green);}
+  .roadmap-node.done .roadmap-node-check{
+    background:var(--green);
+    border-color:var(--green);
+    color:#0b0d12;
+  }
+  .roadmap-node-chevron{
+    flex:0 0 auto;
+    color:var(--text-dim);
+    transition:transform .2s ease;
+  }
+  .roadmap-node.open .roadmap-node-chevron{transform:rotate(180deg);}
+  .roadmap-connector{
+    display:flex;
+    justify-content:center;
+    height:24px;
+    position:relative;
+  }
+  .roadmap-connector::before{
+    content:'';
+    position:absolute;
+    top:0;bottom:0;left:50%;
+    width:2px;
+    transform:translateX(-50%);
+    background:linear-gradient(180deg,var(--accent),var(--accent-2));
+    box-shadow:0 0 8px rgba(124,92,255,.5);
+  }
+  .roadmap-connector .arrow{
+    position:absolute;
+    bottom:-2px;left:50%;
+    transform:translateX(-50%);
+    color:var(--accent-2);
+    font-size:.85rem;
+    line-height:1;
+  }
+  .roadmap-node-detail{
+    max-height:0;
+    overflow:hidden;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-top:none;
+    border-radius:0 0 14px 14px;
+    font-size:.84rem;
+    color:var(--text-dim);
+    line-height:1.6;
+    transition:max-height .3s ease;
+  }
+  .roadmap-node-detail-inner{padding:14px 16px 16px;}
+  .roadmap-node-detail.open{max-height:700px;}
+  .roadmap-node-detail p{margin:0 0 8px;}
+  .roadmap-node-detail ul{margin:6px 0 8px;padding-left:18px;}
+  .roadmap-node-detail li{margin-bottom:4px;}
+  .roadmap-node-detail code{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:1px 6px;
+    font-size:.78rem;
+  }
+
   /* 🎡 Kader Çarkı modalı */
   .wheel-wrap{
     position:relative;
@@ -2059,6 +2173,7 @@
   const LS_XP_AWARDED = 'pfb_xp_awarded_ids_v1';
   const LS_MUTED = 'pfb_muted_v1';
   const LS_DAILY = 'pfb_daily_challenge_v1';
+  const LS_ROADMAP_PROGRESS = 'pfb_roadmap_progress_v1';
 
   const STATUS_OPTIONS = ['Fikir Aşamasında', 'Devam Ediyor', 'Tamamlandı'];
   const STATUS_CLASS = {
@@ -2068,11 +2183,11 @@
   };
   const REAL_DIFFICULTIES = ['Başlangıç', 'Orta', 'İleri'];
 
-  const ROADMAP_STEPS = [
-    "Veritabanı ve Mimari Planlama",
-    "UI/UX Tasarımı ve Arayüz Bileşenleri",
-    "Entegrasyon, İş Mantığı & API/WebSocket",
-    "Test, Optimizasyon ve Yayına Alma (Deploy)"
+  const ROADMAP_NODES = [
+    { icon: '📐', title: 'Mimari & Veritabanı', sub: 'Veri modeli ve teknoloji seçimi' },
+    { icon: '🎨', title: 'UI/UX & Arayüz', sub: 'Ekranlar ve bileşenler' },
+    { icon: '⚡', title: 'API & İş Mantığı', sub: 'Endpoint\'ler ve entegrasyon' },
+    { icon: '🚀', title: 'Deployment & Test', sub: 'Yayına alma ve doğrulama' }
   ];
 
   const WHEEL_COLORS = ['#7c5cff', '#22d3ee', '#f472b6', '#3fb950', '#e3b341', '#f85149', '#8b5cf6', '#06b6d4'];
@@ -2182,6 +2297,15 @@
   function saveDailyChallengeState(st){
     localStorage.setItem(LS_DAILY, JSON.stringify(st));
   }
+  function loadRoadmapProgress(){
+    try{
+      const raw = localStorage.getItem(LS_ROADMAP_PROGRESS);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){ return {}; }
+  }
+  function saveRoadmapProgress(map){
+    localStorage.setItem(LS_ROADMAP_PROGRESS, JSON.stringify(map));
+  }
 
   let customProjects = loadCustomProjects();
   let statusMap = loadStatusMap();
@@ -2191,6 +2315,20 @@
   let authInitialized = false;
   let totalXp = loadXp();
   let xpAwardedIds = new Set(loadXpAwardedIds().map(String));
+  let roadmapProgress = loadRoadmapProgress();
+
+  function getRoadmapDone(projectId){
+    const arr = roadmapProgress[String(projectId)];
+    return Array.isArray(arr) ? arr : ROADMAP_NODES.map(() => false);
+  }
+  function toggleRoadmapStepDone(projectId, idx){
+    const key = String(projectId);
+    const arr = getRoadmapDone(projectId).slice();
+    arr[idx] = !arr[idx];
+    roadmapProgress[key] = arr;
+    saveRoadmapProgress(roadmapProgress);
+    return arr;
+  }
 
   function getAllProjects(){
     return BUILT_IN_PROJECTS.concat(customProjects);
@@ -2664,6 +2802,100 @@
     return `Selam, bana "${p.name}" isimli projeyi yapmamda yardımcı ol. Kullanacağım teknolojiler: ${techStr}. Projenin temel özellikleri şunlar olacak:\n${featuresStr}\nBana başlangıç dosya yapısını ve temel mimariyi hazırlar mısın?`;
   }
 
+  function detectPrimaryStack(techList){
+    const lower = techList.map(t => t.toLowerCase());
+    if(lower.some(t => /mongo/.test(t))) return 'mongo';
+    if(lower.some(t => /postgres|mysql|sql server|sqlite/.test(t))) return 'sql';
+    if(lower.some(t => /react|next|vue|angular/.test(t))) return 'frontend';
+    if(lower.some(t => /node|express|javascript|typescript/.test(t))) return 'node';
+    if(lower.some(t => /python|flask|django|fastapi/.test(t))) return 'python';
+    if(lower.some(t => /c#|\.net|asp\.net/.test(t))) return 'dotnet';
+    if(lower.some(t => /react native|flutter|swift|kotlin|android|ios/.test(t))) return 'mobile';
+    return 'generic';
+  }
+
+  function slugifyFeatureToEndpoint(f){
+    const slug = (f || '')
+      .toLocaleLowerCase('tr-TR')
+      .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+      .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-+|-+$)/g, '')
+      .slice(0, 24);
+    return slug || 'islem';
+  }
+
+  function buildRoadmapNodeDetail(idx, p){
+    const techList = p.tech || [];
+    const stack = detectPrimaryStack(techList);
+    const techLine = techList.length ? techList.join(', ') : 'henüz belirtilmedi';
+    const features = (p.features || []).slice(0, 5);
+
+    if(idx === 0){
+      const dbHint = stack === 'mongo'
+        ? 'MongoDB gibi bir NoSQL veritabanı bu projeye uygun görünüyor — koleksiyon bazlı, esnek şema kurabilirsin.'
+        : stack === 'sql'
+        ? 'İlişkisel bir veritabanı (PostgreSQL/MySQL) seçilmiş — tablolar arası ilişkileri (foreign key) net planla.'
+        : 'Veri yapın netleşmediyse basit projelerde SQLite/PostgreSQL, esnek/iç içe veri için MongoDB tercih edilebilir.';
+      return `
+        <p><strong>Kullanılacak teknolojiler:</strong> ${techLine}</p>
+        <p>${dbHint}</p>
+        <p><strong>Planlanacak ana varlıklar (entity):</strong></p>
+        <ul>${features.length ? features.map(f => `<li>"${f}" özelliği için gereken veri alanlarını çıkar</li>`).join('') : '<li>Projenin temel veri modelini (kullanıcı, içerik vb.) çıkar</li>'}</ul>
+        <p>Şema taslağını çıkardıktan sonra ilişkileri ve index ihtiyacını (arama/filtreleme yapılacak alanlar) belirle.</p>
+      `;
+    }
+    if(idx === 1){
+      const uiHint = stack === 'frontend'
+        ? 'Component tabanlı bir yapı (sayfa başına birkaç küçük component) kullan, tekrar eden UI parçalarını ortak component\'e çıkar.'
+        : stack === 'mobile'
+        ? 'Mobil ekranlarda gezinme akışını (navigation flow) önce kağıt üzerinde ya da Figma\'da netleştir.'
+        : 'Basit ve tutarlı bir grid/flex layout ile başla, koyu/açık tema renklerini baştan sabitle.';
+      return `
+        <p><strong>Tasarlanacak ana ekranlar:</strong></p>
+        <ul>
+          <li>Ana sayfa / giriş ekranı</li>
+          ${features.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+        <p>${uiHint}</p>
+        <p>Kullanıcı akışını (onboarding → asıl işlev → sonuç ekranı) çizip ona göre bileşenleri listele.</p>
+      `;
+    }
+    if(idx === 2){
+      const backendHint = stack === 'node'
+        ? 'Node.js/Express ile REST endpoint\'lerini controller/route ayrımıyla organize et.'
+        : stack === 'python'
+        ? 'Flask/Django/FastAPI ile route\'ları blueprint/router bazında grupla.'
+        : stack === 'dotnet'
+        ? 'ASP.NET Core ile controller bazlı API endpoint\'leri oluştur.'
+        : 'Backend teknolojini seçtikten sonra endpoint\'leri kaynak (resource) bazlı grupla.';
+      const endpoints = features.length
+        ? features.map(f => `<li><code>POST /api/${slugifyFeatureToEndpoint(f)}</code> — ${f}</li>`).join('')
+        : '<li><code>GET /api/health</code> — servis ayakta mı kontrolü</li>';
+      return `
+        <p>${backendHint}</p>
+        <p><strong>Örnek endpoint taslağı:</strong></p>
+        <ul>${endpoints}</ul>
+        <p>Kimlik doğrulama gerekiyorsa (JWT/session) en başta karar ver, tüm endpoint'leri buna göre koru.</p>
+      `;
+    }
+    // idx === 3
+    const deployHint = stack === 'frontend'
+      ? 'Statik/React tabanlı projeler için Vercel veya Netlify hızlı ve ücretsiz bir başlangıç.'
+      : stack === 'node'
+      ? 'Node.js backend için Railway, Render ya da Fly.io uygun; frontend ayrıysa Vercel/Netlify ile birlikte kullan.'
+      : stack === 'python'
+      ? 'Python servisleri için Render, Railway ya da PythonAnywhere değerlendirilebilir.'
+      : stack === 'mobile'
+      ? 'Mobil uygulamalar için TestFlight (iOS) / Internal Testing (Android) ile kapalı test sürümü yayınla.'
+      : 'Projenin ihtiyacına göre Docker container\'a alıp herhangi bir bulut sağlayıcıya deploy edebilirsin.';
+    return `
+      <p><strong>Test:</strong> Kritik akışlar için en azından manuel bir test senaryosu listesi çıkar; mümkünse birim testleri ekle.</p>
+      <p><strong>Deploy önerisi:</strong> ${deployHint}</p>
+      <p>Yayına almadan önce ortam değişkenlerini (API anahtarları, DB bağlantısı) gizli tutmayı unutma.</p>
+    `;
+  }
+
   function buildInstallSteps(techList){
     const lower = techList.map(t => t.toLowerCase());
     const lines = ['git clone <repo-url>', 'cd proje-klasoru'];
@@ -2686,7 +2918,7 @@
     const featuresStr = (p.features && p.features.length)
       ? p.features.map(f => `- [ ] ${f}`).join('\n')
       : '- [ ] (özellik belirtilmedi)';
-    const roadmapStr = ROADMAP_STEPS.map((s, i) => `${i + 1}. ${s}`).join('\n');
+    const roadmapStr = ROADMAP_NODES.map((n, i) => `${i + 1}. ${n.icon} ${n.title}`).join('\n');
 
     return `# ${p.name}
 
@@ -3236,12 +3468,29 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
   function openRoadmapModal(p){
     const tagsHTML = (p.tech || []).map(t => `<span class="tag">${t}</span>`).join('');
     const hours = estimateHours(p);
-    const stepsHTML = ROADMAP_STEPS.map((step, i) => `
-      <li class="guide-step" data-step-idx="${i}">
-        <span class="step-num">${i + 1}</span>
-        <span class="step-text">${step}</span>
-      </li>
-    `).join('');
+    const doneState = getRoadmapDone(p.id);
+
+    const nodesHTML = ROADMAP_NODES.map((node, i) => {
+      const isDone = !!doneState[i];
+      const connector = i < ROADMAP_NODES.length - 1
+        ? `<div class="roadmap-connector"><span class="arrow">▼</span></div>`
+        : '';
+      return `
+        <div class="roadmap-node ${isDone ? 'done' : ''}" data-node-idx="${i}">
+          <div class="roadmap-node-icon">${node.icon}</div>
+          <div class="roadmap-node-text">
+            <div class="roadmap-node-title">${i + 1}. ${node.title}</div>
+            <div class="roadmap-node-sub">${node.sub}</div>
+          </div>
+          <div class="roadmap-node-check" data-node-check="${i}" title="Tamamlandı olarak işaretle">✓</div>
+          <div class="roadmap-node-chevron">▾</div>
+        </div>
+        <div class="roadmap-node-detail" id="roadmapDetail-${i}">
+          <div class="roadmap-node-detail-inner">${buildRoadmapNodeDetail(i, p)}</div>
+        </div>
+        ${connector}
+      `;
+    }).join('');
 
     guideModalBox.innerHTML = `
       <div class="modal-header">
@@ -3257,12 +3506,12 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
       </div>
       <div class="time-badge" style="margin-bottom:16px;">⏱️ Tahmini Süre: ~${hours} Saat</div>
       ${tagsHTML ? `
-      <div style="margin-bottom:18px;">
+      <div style="margin-bottom:8px;">
         <div class="section-title">Teknolojiler</div>
         <div class="tags">${tagsHTML}</div>
       </div>` : ''}
-      <div class="section-title">🗺️ Standart Yol Haritası</div>
-      <ol class="guide-steps">${stepsHTML}</ol>
+      <div class="section-title">🗺️ Görsel Yol Haritası — bir düğüme tıkla, detayları gör</div>
+      <div class="roadmap-graph" id="roadmapGraph">${nodesHTML}</div>
       <div class="modal-actions">
         <button type="button" class="btn-secondary roadmap-copy-btn" data-copy-id="${p.id}">🤖 Prompt Kopyala</button>
         <button type="button" class="btn-secondary roadmap-readme-btn" data-readme-id="${p.id}">📄 README Oluştur</button>
@@ -3271,11 +3520,29 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
     `;
     guideModalOverlay.classList.add('show');
 
-    guideModalBox.querySelectorAll('.guide-step').forEach(li => {
-      li.addEventListener('click', () => li.classList.toggle('done'));
-    });
     document.getElementById('guideModalCloseBtn').addEventListener('click', closeGuideModal);
     document.getElementById('guideModalDoneBtn').addEventListener('click', closeGuideModal);
+
+    guideModalBox.querySelectorAll('.roadmap-node').forEach(nodeEl => {
+      nodeEl.addEventListener('click', (e) => {
+        if(e.target.closest('.roadmap-node-check')) return;
+        const idx = nodeEl.getAttribute('data-node-idx');
+        const detailEl = document.getElementById(`roadmapDetail-${idx}`);
+        const willOpen = !nodeEl.classList.contains('open');
+        nodeEl.classList.toggle('open', willOpen);
+        if(detailEl) detailEl.classList.toggle('open', willOpen);
+      });
+    });
+
+    guideModalBox.querySelectorAll('.roadmap-node-check').forEach(checkEl => {
+      checkEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = Number(checkEl.getAttribute('data-node-check'));
+        const updated = toggleRoadmapStepDone(p.id, idx);
+        const nodeEl = checkEl.closest('.roadmap-node');
+        if(nodeEl) nodeEl.classList.toggle('done', !!updated[idx]);
+      });
+    });
 
     const copyBtn = guideModalBox.querySelector('.roadmap-copy-btn');
     if(copyBtn){
