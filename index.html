@@ -1864,6 +1864,20 @@
   // 503/yoğun talep/overloaded, 429/kota → geçici, birazdan tekrar dene.
   const RETRYABLE_ERROR_PATTERN = /404|not found|no longer available|not supported|503|overloaded|high demand|unavailable|429|quota|rate limit/i;
 
+  // Bir model bu süre içinde cevap vermezse (yoğun talep, ağ sorunu vb.) bekletmeden
+  // sıradaki modele geçiyoruz — kullanıcıyı tek bir modelin takılmasına bağımlı bırakmamak için.
+  const MODEL_TIMEOUT_MS = 12000;
+
+  function withTimeout(promise, ms){
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('unavailable: request timed out')), ms);
+      promise.then(
+        (value) => { clearTimeout(timer); resolve(value); },
+        (err) => { clearTimeout(timer); reject(err); }
+      );
+    });
+  }
+
   const RESPONSE_SCHEMA_CONFIG = {
     responseMimeType: "application/json",
     responseSchema: {
@@ -1887,21 +1901,18 @@
     "net bir açıklama olmalı. 'tech' kullanılabilecek 3-5 güncel teknoloji/kütüphane ismi içermeli. " +
     "'features' projede olması gereken 4-6 temel özelliği Türkçe olarak madde madde listelemeli.";
 
-  function sleep(ms){
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async function tryAllModels(genAI, prompt){
+  async function tryAllModels(genAI, prompt, onAttempt){
     let lastError = null;
     for(let i = 0; i < MODEL_CANDIDATES.length; i++){
       const modelName = MODEL_CANDIDATES[i];
+      if(onAttempt) onAttempt(modelName, i, MODEL_CANDIDATES.length);
       try{
         const model = genAI.getGenerativeModel({
           model: modelName,
           systemInstruction: SYSTEM_INSTRUCTION,
           generationConfig: RESPONSE_SCHEMA_CONFIG
         });
-        const result = await model.generateContent(prompt);
+        const result = await withTimeout(model.generateContent(prompt), MODEL_TIMEOUT_MS);
         const raw = result.response.text();
         return JSON.parse(raw);
       }catch(err){
@@ -1915,20 +1926,10 @@
     throw lastError || new Error("Hiçbir model yanıt vermedi.");
   }
 
-  window.__generateAIProjectIdea = async function(apiKey, { difficulty, category }){
+  window.__generateAIProjectIdea = async function(apiKey, { difficulty, category }, onAttempt){
     const genAI = new GoogleGenerativeAI(apiKey);
     const prompt = `Zorluk seviyesi "${difficulty}" olan, "${category}" kategorisinde, daha önce çok fazla tekrarlanmamış yaratıcı bir yazılım proje fikri üret.`;
-
-    try{
-      return await tryAllModels(genAI, prompt);
-    }catch(err){
-      const msg = (err && err.message) ? err.message : '';
-      if(RETRYABLE_ERROR_PATTERN.test(msg)){
-        await sleep(1500);
-        return await tryAllModels(genAI, prompt);
-      }
-      throw err;
-    }
+    return await tryAllModels(genAI, prompt, onAttempt);
   };
 </script>
 
@@ -4030,6 +4031,10 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
       const data = await window.__generateAIProjectIdea(apiKey, {
         difficulty: chosenDifficulty,
         category: chosenCategory
+      }, (modelName, idx, total) => {
+        setAiStatus(idx === 0
+          ? `Gemini "${chosenCategory}" / "${chosenDifficulty}" için fikir üretiyor...`
+          : `İlk model yanıt vermedi, alternatif model deneniyor (${idx + 1}/${total})...`, 'info');
       });
 
       if(!data || !data.name || !data.description){
