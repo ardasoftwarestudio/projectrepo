@@ -1404,7 +1404,7 @@
     <p>Yeni bir şey inşa etmek için ilham al. Ara, filtrele, keşfet, şansına bırak ya da yapay zekaya üretsin.</p>
   </header>
 
-  <div class="daily-challenge-card" id="dailyChallengeCard" title="Günün Görevi'ni tamamla, +50 XP bonus kap">
+  <div class="daily-challenge-card explore-only" id="dailyChallengeCard" title="Günün Görevi'ni tamamla, +50 XP bonus kap">
     <div class="daily-icon">🔥</div>
     <div class="daily-info">
       <div class="daily-label">Günün Görevi</div>
@@ -1429,14 +1429,14 @@
     </div>
   </div>
 
-  <div class="random-bar">
+  <div class="random-bar explore-only">
     <button id="randomBtn">🎲 Bana Rastgele Bir Proje Ver!</button>
     <button id="wheelBtn" type="button">🎡 Kader Çarkı</button>
     <button id="aiBtn">✨ AI ile Yeni Fikir Üret</button>
   </div>
-  <div class="ai-status" id="aiStatusMsg"></div>
+  <div class="ai-status explore-only" id="aiStatusMsg"></div>
 
-  <div class="spotlight" id="spotlight"></div>
+  <div class="spotlight explore-only" id="spotlight"></div>
 
   <div class="stats-bar" id="statsBar">
     <div class="stat-card idea">
@@ -2822,6 +2822,10 @@
     if(subEl) subEl.textContent = meta.subtitle;
     document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-page') === state.page);
+    });
+    const isExplorePage = state.page === 'suggestions';
+    document.querySelectorAll('.explore-only').forEach(el => {
+      el.style.display = isExplorePage ? '' : 'none';
     });
   }
 
