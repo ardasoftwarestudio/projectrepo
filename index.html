@@ -626,16 +626,17 @@
   }
   .spotlight.show{display:block;}
 
-  /* Görünüm anahtarı: Öneriler / Kütüphanem */
+  /* Görünüm anahtarı: Öneriler / Kütüphanem / Favorilerim */
   .view-toggle{
     display:flex;
     gap:6px;
-    max-width:420px;
+    max-width:560px;
     margin:0 auto 18px;
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:999px;
     padding:5px;
+    flex-wrap:wrap;
   }
   .view-toggle button{
     flex:1;
@@ -648,6 +649,7 @@
     font-size:.83rem;
     font-weight:600;
     transition:all .15s ease;
+    white-space:nowrap;
   }
   .view-toggle button:hover:not(.active){color:var(--text);}
   .view-toggle button.active{
@@ -894,6 +896,30 @@
     color:#c7b9ff;
   }
 
+  .favorite-btn{
+    background:none;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    cursor:pointer;
+    font-size:.9rem;
+    padding:3px 8px;
+    border-radius:999px;
+    transition:all .15s ease;
+    line-height:1.4;
+  }
+  .favorite-btn:hover{border-color:var(--yellow);color:var(--yellow);}
+  .favorite-btn.active{
+    background:rgba(227,179,65,.18);
+    border-color:var(--yellow);
+    color:var(--yellow);
+    animation:starPop .35s ease;
+  }
+  @keyframes starPop{
+    0%{transform:scale(.7);}
+    60%{transform:scale(1.3);}
+    100%{transform:scale(1);}
+  }
+
   .delete-btn{
     background:none;
     border:none;
@@ -1081,7 +1107,7 @@
     box-shadow:0 0 0 3px rgba(124,92,255,.15);
   }
   .hint{font-size:.72rem;color:var(--text-dim);}
-  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap;}
   .btn-secondary{
     background:var(--bg-alt);
     border:1px solid var(--border);
@@ -1105,7 +1131,7 @@
   }
   .btn-primary:hover{filter:brightness(1.08);}
 
-  /* Adım adım rehber modalı */
+  /* Adım adım rehber / Yol Haritası modalı */
   .guide-steps{
     list-style:none;
     margin:0 0 4px;
@@ -1219,7 +1245,7 @@
 
       <div class="settings-section">
         <div class="settings-section-title">💾 Veri Yönetimi</div>
-        <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Özel/AI fikirlerini, durumlarını ve XP ilerlemeni JSON olarak indir, başka bir cihazda geri yükle.</p>
+        <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Özel/AI fikirlerini, durumlarını, favorilerini ve XP ilerlemeni JSON olarak indir, başka bir cihazda geri yükle.</p>
         <div class="settings-btn-row">
           <button type="button" class="btn-secondary" id="settingsExportBtn">📤 Dışa Aktar</button>
           <button type="button" class="btn-secondary" id="settingsImportBtn">📥 İçe Aktar</button>
@@ -1228,7 +1254,7 @@
 
       <div class="settings-section danger">
         <div class="settings-section-title">⚠️ Tehlikeli Bölge</div>
-        <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni ve XP/seviye ilerlemeni bu cihazdan siler. Bu işlem geri alınamaz.</p>
+        <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni, favorilerini ve XP/seviye ilerlemeni bu cihazdan siler. Bu işlem geri alınamaz.</p>
         <button type="button" class="btn-secondary danger-btn" id="resetDataBtn">🗑 Tüm Verileri Sıfırla</button>
       </div>
 
@@ -1293,6 +1319,7 @@
   <div class="view-toggle" id="viewToggle">
     <button type="button" data-view="all" class="active">Öneriler</button>
     <button type="button" data-view="library">🔖 Kütüphanem (<span id="libraryCount">0</span>)</button>
+    <button type="button" data-view="favorites">⭐ Favorilerim (<span id="favoriteCount">0</span>)</button>
   </div>
 
   <div class="search-section" id="searchSection">
@@ -1371,7 +1398,7 @@
   </div>
 </div>
 
-<!-- Adım adım rehber modalı -->
+<!-- Adım adım rehber / Yol Haritası modalı (paylaşımlı) -->
 <div class="modal-overlay" id="guideModalOverlay">
   <div class="modal-box" id="guideModalBox">
     <!-- JS tarafından doldurulur -->
@@ -1709,6 +1736,7 @@
   const LS_STATUS_MAP = 'pfb_status_map_v1';
   const LS_API_KEY = 'pfb_gemini_api_key_v1';
   const LS_LIBRARY = 'pfb_library_ids_v1';
+  const LS_FAVORITES = 'pfb_favorite_ids_v1';
   const LS_GUEST = 'pfb_guest_v1';
   const LS_XP = 'pfb_xp_v1';
   const LS_XP_AWARDED = 'pfb_xp_awarded_ids_v1';
@@ -1721,6 +1749,14 @@
     'Tamamlandı': 'status-done'
   };
   const REAL_DIFFICULTIES = ['Başlangıç', 'Orta', 'İleri'];
+
+  // Kartlardaki "🗺️ Yol Haritası" modalında gösterilen standart 4 adım.
+  const ROADMAP_STEPS = [
+    "Veritabanı ve Mimari Planlama",
+    "UI/UX Tasarımı ve Arayüz Bileşenleri",
+    "Entegrasyon, İş Mantığı & API/WebSocket",
+    "Test, Optimizasyon ve Yayına Alma (Deploy)"
+  ];
 
   // ---- Gamification (XP / Seviye) sabitleri ----
   const XP_REWARDS = { 'Başlangıç': 50, 'Orta': 100, 'İleri': 200 };
@@ -1774,6 +1810,15 @@
   function saveLibraryIdsToLS(list){
     localStorage.setItem(LS_LIBRARY, JSON.stringify(list));
   }
+  function loadFavoriteIds(){
+    try{
+      const raw = localStorage.getItem(LS_FAVORITES);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+  function saveFavoriteIdsToLS(list){
+    localStorage.setItem(LS_FAVORITES, JSON.stringify(list));
+  }
   function isGuestChosen(){
     return localStorage.getItem(LS_GUEST) === '1';
   }
@@ -1807,6 +1852,7 @@
   let customProjects = loadCustomProjects();
   let statusMap = loadStatusMap();
   let libraryIds = new Set(loadLibraryIds().map(String));
+  let favoriteIds = new Set(loadFavoriteIds().map(String));
   let currentUser = null;
   let authInitialized = false;
   let totalXp = loadXp();
@@ -1820,6 +1866,9 @@
   }
   function isInLibrary(id){
     return libraryIds.has(String(id));
+  }
+  function isFavorite(id){
+    return favoriteIds.has(String(id));
   }
 
   // ---- Bulut senkronizasyonu (giriş yapılmışsa) ----
@@ -1848,7 +1897,8 @@
         await window.__saveCloudData(currentUser.uid, {
           customProjects,
           statusMap,
-          libraryIds: Array.from(libraryIds)
+          libraryIds: Array.from(libraryIds),
+          favoriteIds: Array.from(favoriteIds)
         });
         setSyncStatus('synced');
       }catch(e){
@@ -1867,6 +1917,10 @@
   }
   function persistLibrary(){
     saveLibraryIdsToLS(Array.from(libraryIds));
+    syncToCloudDebounced();
+  }
+  function persistFavorites(){
+    saveFavoriteIdsToLS(Array.from(favoriteIds));
     syncToCloudDebounced();
   }
   function persistXp(){
@@ -1892,9 +1946,26 @@
     persistLibrary();
     return nowSaved;
   }
+  function toggleFavorite(id){
+    const key = String(id);
+    let nowFav;
+    if(favoriteIds.has(key)){
+      favoriteIds.delete(key);
+      nowFav = false;
+    }else{
+      favoriteIds.add(key);
+      nowFav = true;
+    }
+    persistFavorites();
+    return nowFav;
+  }
   function updateLibraryCountUI(){
     const el = document.getElementById('libraryCount');
     if(el) el.textContent = libraryIds.size;
+  }
+  function updateFavoriteCountUI(){
+    const el = document.getElementById('favoriteCount');
+    if(el) el.textContent = favoriteIds.size;
   }
   function updateStatsUI(){
     const all = getAllProjects();
@@ -2281,6 +2352,8 @@
     }
     const saved = isInLibrary(p.id);
     const bookmarkHTML = `<button class="bookmark-btn ${saved ? 'saved' : ''}" data-bookmark-id="${p.id}" title="${saved ? 'Kütüphaneden çıkar' : 'Kütüphaneye ekle'}">${saved ? '🔖' : '➕'}</button>`;
+    const fav = isFavorite(p.id);
+    const favoriteHTML = `<button class="favorite-btn ${fav ? 'active' : ''}" data-favorite-id="${p.id}" title="${fav ? 'Favorilerden çıkar' : 'Favorilere ekle'}">${fav ? '⭐' : '☆'}</button>`;
 
     return `
       <div class="card" data-id="${p.id}">
@@ -2291,6 +2364,7 @@
             <span class="badge diff-${p.difficulty}">${p.difficulty}</span>
             <span class="badge cat">${p.category}</span>
             ${originBadge}
+            ${favoriteHTML}
             ${bookmarkHTML}
             ${p.isCustom ? `<button class="delete-btn" data-delete-id="${p.id}" title="Bu fikri sil">🗑</button>` : ''}
           </div>
@@ -2314,6 +2388,7 @@
         </div>` : ''}
         <div class="card-actions">
           <button type="button" class="btn-secondary copy-prompt-btn" data-copy-id="${p.id}">🤖 Prompt'u Kopyala</button>
+          <button type="button" class="btn-secondary roadmap-btn" data-roadmap-id="${p.id}">🗺️ Yol Haritası</button>
           ${showGuideButton ? `<button type="button" class="btn-primary guide-btn" data-guide-id="${p.id}">🚀 Adım Adım Başla</button>` : ''}
         </div>
       </div>
@@ -2385,6 +2460,18 @@
       });
     });
 
+    root.querySelectorAll('.favorite-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idAttr = btn.getAttribute('data-favorite-id');
+        const numericId = Number(idAttr);
+        const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
+        toggleFavorite(realId);
+        // "Favorilerim" görünümü favori durumuna göre filtrelendiği için
+        // listeyi yeniden çizmemiz gerekiyor.
+        render();
+      });
+    });
+
     root.querySelectorAll('.delete-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-delete-id');
@@ -2398,6 +2485,11 @@
           persistLibrary();
           updateLibraryCountUI();
         }
+        if(favoriteIds.has(String(id))){
+          favoriteIds.delete(String(id));
+          persistFavorites();
+          updateFavoriteCountUI();
+        }
         render();
       });
     });
@@ -2409,6 +2501,16 @@
         const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
         const project = getAllProjects().find(p => String(p.id) === String(realId));
         if(project) openGuideModal(project);
+      });
+    });
+
+    root.querySelectorAll('.roadmap-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idAttr = btn.getAttribute('data-roadmap-id');
+        const numericId = Number(idAttr);
+        const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
+        const project = getAllProjects().find(p => String(p.id) === String(realId));
+        if(project) openRoadmapModal(project);
       });
     });
 
@@ -2426,18 +2528,24 @@
   }
 
   function filteredProjects(){
-    return getAllProjects().filter(p =>
-      (state.difficulty === 'Tümü' || p.difficulty === state.difficulty) &&
-      (state.category === 'Tümü' || p.category === state.category) &&
-      (state.view === 'library' ? isInLibrary(p.id) : !isInLibrary(p.id)) &&
-      matchesSearch(p, state.search)
-    );
+    return getAllProjects().filter(p => {
+      let viewMatch;
+      if(state.view === 'library') viewMatch = isInLibrary(p.id);
+      else if(state.view === 'favorites') viewMatch = isFavorite(p.id);
+      else viewMatch = !isInLibrary(p.id);
+
+      return (state.difficulty === 'Tümü' || p.difficulty === state.difficulty) &&
+        (state.category === 'Tümü' || p.category === state.category) &&
+        viewMatch &&
+        matchesSearch(p, state.search);
+    });
   }
 
   function render(){
     buildChips(difficultyFiltersEl, difficulties, 'difficulty');
     buildChips(categoryFiltersEl, getCategories(), 'category');
     updateLibraryCountUI();
+    updateFavoriteCountUI();
     updateStatsUI();
     updateXpUI();
 
@@ -2445,9 +2553,14 @@
     resultsCount.textContent = `${list.length} proje bulundu`;
 
     if(list.length === 0){
-      const msg = state.view === 'library'
-        ? '📌 Kütüphanende henüz proje yok. Öneriler sekmesindeki ➕ butonuna tıklayarak fikir kaydedebilirsin.'
-        : '🎉 Bu filtrelere uyan tüm önerileri zaten kütüphanene eklemişsin! Yeni fikir için 🎲 ya da ✨ AI butonunu dene, ya da filtreleri değiştir.';
+      let msg;
+      if(state.view === 'library'){
+        msg = '📌 Kütüphanende henüz proje yok. Öneriler sekmesindeki ➕ butonuna tıklayarak fikir kaydedebilirsin.';
+      }else if(state.view === 'favorites'){
+        msg = '⭐ Henüz favori işaretlediğin bir proje yok. Beğendiğin kartlardaki ☆ butonuna tıklayarak favorilerine ekleyebilirsin.';
+      }else{
+        msg = '🎉 Bu filtrelere uyan tüm önerileri zaten kütüphanene eklemişsin! Yeni fikir için 🎲 ya da ✨ AI butonunu dene, ya da filtreleri değiştir.';
+      }
       grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${msg}</div>`;
       return;
     }
@@ -2457,7 +2570,7 @@
     attachCardHandlers(grid);
   }
 
-  // ---- Görünüm anahtarı: Öneriler / Kütüphanem ----
+  // ---- Görünüm anahtarı: Öneriler / Kütüphanem / Favorilerim ----
   viewToggle.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-view]');
     if(!btn) return;
@@ -2595,6 +2708,58 @@
     document.getElementById('guideModalCloseBtn').addEventListener('click', closeGuideModal);
     document.getElementById('guideModalDoneBtn').addEventListener('click', closeGuideModal);
   }
+
+  // ---- 🗺️ Yol Haritası modalı (standart 4 adımlı yazılım geliştirme süreci) ----
+  function openRoadmapModal(p){
+    const tagsHTML = (p.tech || []).map(t => `<span class="tag">${t}</span>`).join('');
+    const stepsHTML = ROADMAP_STEPS.map((step, i) => `
+      <li class="guide-step" data-step-idx="${i}">
+        <span class="step-num">${i + 1}</span>
+        <span class="step-text">${step}</span>
+      </li>
+    `).join('');
+
+    guideModalBox.innerHTML = `
+      <div class="modal-header">
+        <div>
+          <h2>🗺️ ${p.name}</h2>
+          <p class="sub">${p.description}</p>
+        </div>
+        <button class="modal-close" id="guideModalCloseBtn" type="button">×</button>
+      </div>
+      <div class="badges" style="margin-bottom:16px;">
+        <span class="badge diff-${p.difficulty}">${p.difficulty}</span>
+        <span class="badge cat">${p.category}</span>
+      </div>
+      ${tagsHTML ? `
+      <div style="margin-bottom:18px;">
+        <div class="section-title">Teknolojiler</div>
+        <div class="tags">${tagsHTML}</div>
+      </div>` : ''}
+      <div class="section-title">🗺️ Standart Yol Haritası</div>
+      <ol class="guide-steps">${stepsHTML}</ol>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary roadmap-copy-btn" data-copy-id="${p.id}">🤖 Prompt Kopyala</button>
+        <button type="button" class="btn-primary" id="guideModalDoneBtn">Kapat</button>
+      </div>
+    `;
+    guideModalOverlay.classList.add('show');
+
+    guideModalBox.querySelectorAll('.guide-step').forEach(li => {
+      li.addEventListener('click', () => li.classList.toggle('done'));
+    });
+    document.getElementById('guideModalCloseBtn').addEventListener('click', closeGuideModal);
+    document.getElementById('guideModalDoneBtn').addEventListener('click', closeGuideModal);
+
+    const copyBtn = guideModalBox.querySelector('.roadmap-copy-btn');
+    if(copyBtn){
+      copyBtn.addEventListener('click', async () => {
+        const ok = await copyToClipboard(buildPromptText(p));
+        flashButtonFeedback(copyBtn, ok ? '✓ Kopyalandı!' : '⚠️ Kopyalanamadı', 1600);
+      });
+    }
+  }
+
   function closeGuideModal(){
     guideModalOverlay.classList.remove('show');
   }
@@ -2638,15 +2803,17 @@
   });
 
   resetDataBtn.addEventListener('click', () => {
-    if(!confirm('Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni ve XP/seviye ilerlemeni bu cihazdan silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
+    if(!confirm('Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni, favorilerini ve XP/seviye ilerlemeni bu cihazdan silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
     customProjects = [];
     statusMap = {};
     libraryIds = new Set();
+    favoriteIds = new Set();
     totalXp = 0;
     xpAwardedIds = new Set();
     persistCustomProjects();
     persistStatusMap();
     persistLibrary();
+    persistFavorites();
     persistXp();
     persistXpAwarded();
     render();
@@ -2672,6 +2839,7 @@
       customProjects,
       statusMap,
       libraryIds: Array.from(libraryIds),
+      favoriteIds: Array.from(favoriteIds),
       xpAwardedIds: Array.from(xpAwardedIds),
       totalXp
     };
@@ -2714,6 +2882,9 @@
         if(Array.isArray(data.libraryIds)){
           data.libraryIds.forEach(id => libraryIds.add(String(id)));
         }
+        if(Array.isArray(data.favoriteIds)){
+          data.favoriteIds.forEach(id => favoriteIds.add(String(id)));
+        }
         if(Array.isArray(data.xpAwardedIds)){
           data.xpAwardedIds.forEach(id => xpAwardedIds.add(String(id)));
         }
@@ -2721,6 +2892,7 @@
         persistCustomProjects();
         persistStatusMap();
         persistLibrary();
+        persistFavorites();
         persistXpAwarded();
         recomputeTotalXpFromAwarded();
         render();
@@ -2940,15 +3112,18 @@
           customProjects = Array.isArray(cloudData.customProjects) ? cloudData.customProjects : [];
           statusMap = (cloudData.statusMap && typeof cloudData.statusMap === 'object') ? cloudData.statusMap : {};
           libraryIds = new Set((Array.isArray(cloudData.libraryIds) ? cloudData.libraryIds : []).map(String));
+          favoriteIds = new Set((Array.isArray(cloudData.favoriteIds) ? cloudData.favoriteIds : []).map(String));
           saveCustomProjects(customProjects);
           saveStatusMap(statusMap);
           saveLibraryIdsToLS(Array.from(libraryIds));
+          saveFavoriteIdsToLS(Array.from(favoriteIds));
         }else{
           // İlk giriş: mevcut yerel veriyi buluta yükle.
           await window.__saveCloudData(user.uid, {
             customProjects,
             statusMap,
-            libraryIds: Array.from(libraryIds)
+            libraryIds: Array.from(libraryIds),
+            favoriteIds: Array.from(favoriteIds)
           });
         }
         setSyncStatus('synced');
