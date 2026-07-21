@@ -1382,12 +1382,12 @@
           <span class="nav-icon">💡</span>
           <span>Proje Önerileri</span>
         </button>
-        <button type="button" class="nav-item" data-page="library">
+        <button type="button" class="nav-item" data-modal-page="library">
           <span class="nav-icon">📚</span>
           <span>Kütüphanem</span>
           <span class="nav-count" id="libraryCount">0</span>
         </button>
-        <button type="button" class="nav-item" data-page="favorites">
+        <button type="button" class="nav-item" data-modal-page="favorites">
           <span class="nav-icon">⭐</span>
           <span>Favorilerim</span>
           <span class="nav-count" id="favoriteCount">0</span>
@@ -1432,7 +1432,7 @@
     <p>Yeni bir şey inşa etmek için ilham al. Ara, filtrele, keşfet, şansına bırak ya da yapay zekaya üretsin.</p>
   </header>
 
-  <div class="daily-challenge-card explore-only" id="dailyChallengeCard" title="Günün Görevi'ni tamamla, +50 XP bonus kap">
+  <div class="daily-challenge-card" id="dailyChallengeCard" title="Günün Görevi'ni tamamla, +50 XP bonus kap">
     <div class="daily-icon">🔥</div>
     <div class="daily-info">
       <div class="daily-label">Günün Görevi</div>
@@ -1457,14 +1457,14 @@
     </div>
   </div>
 
-  <div class="random-bar explore-only">
+  <div class="random-bar">
     <button id="randomBtn">🎲 Bana Rastgele Bir Proje Ver!</button>
     <button id="wheelBtn" type="button">🎡 Kader Çarkı</button>
     <button id="aiBtn">✨ AI ile Yeni Fikir Üret</button>
   </div>
-  <div class="ai-status explore-only" id="aiStatusMsg"></div>
+  <div class="ai-status" id="aiStatusMsg"></div>
 
-  <div class="spotlight explore-only" id="spotlight"></div>
+  <div class="spotlight" id="spotlight"></div>
 
   <div class="stats-bar" id="statsBar">
     <div class="stat-card idea">
@@ -1567,6 +1567,21 @@
         <button type="submit" class="btn-primary">Fikri Ekle</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- 📚⭐ Kütüphanem / Favorilerim modalı -->
+<div class="modal-overlay" id="pageModalOverlay">
+  <div class="modal-box" id="pageModalBox" style="max-width:960px;">
+    <div class="modal-header">
+      <div>
+        <h2 id="pageModalTitle">📚 Kütüphanem</h2>
+        <p class="sub" id="pageModalSubtitle">Devam eden ve tamamladığın projelerin.</p>
+      </div>
+      <button class="modal-close" id="pageModalCloseBtn" type="button">×</button>
+    </div>
+    <div class="results-count" id="pageModalResultsCount"></div>
+    <div class="grid" id="pageModalGrid"></div>
   </div>
 </div>
 
@@ -2978,10 +2993,6 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
     document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-page') === state.page);
     });
-    const isExplorePage = state.page === 'suggestions';
-    document.querySelectorAll('.explore-only').forEach(el => {
-      el.style.display = isExplorePage ? '' : 'none';
-    });
   }
 
   function render(){
@@ -2998,22 +3009,61 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
     resultsCount.textContent = `${list.length} proje bulundu`;
 
     if(list.length === 0){
-      let msg;
-      if(state.page === 'library'){
-        msg = '📌 Kütüphanende henüz proje yok. Proje Önerileri sayfasındaki ➕ butonuna tıklayarak fikir kaydedebilirsin.';
-      }else if(state.page === 'favorites'){
-        msg = '⭐ Henüz favori işaretlediğin bir proje yok. Beğendiğin kartlardaki ☆ butonuna tıklayarak favorilerine ekleyebilirsin.';
-      }else{
-        msg = '🎉 Bu filtrelere uyan tüm önerileri zaten kütüphanene eklemişsin! Yeni fikir için 🎲 ya da ✨ AI butonunu dene, ya da filtreleri değiştir.';
-      }
-      grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${msg}</div>`;
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">🎉 Bu filtrelere uyan tüm önerileri zaten kütüphanene eklemişsin! Yeni fikir için 🎲 ya da ✨ AI butonunu dene, ya da filtreleri değiştir.</div>`;
+    }else{
+      grid.innerHTML = list.map(p => cardHTML(p, false, null, false)).join('');
+      attachCardHandlers(grid);
+    }
+
+    if(currentModalPage && pageModalOverlay.classList.contains('show')){
+      renderPageModalGrid(currentModalPage);
+    }
+  }
+
+  // ---- 📚⭐ Kütüphanem / Favorilerim modalı ----
+  const pageModalOverlay = document.getElementById('pageModalOverlay');
+  const pageModalCloseBtn = document.getElementById('pageModalCloseBtn');
+  const pageModalGrid = document.getElementById('pageModalGrid');
+  const pageModalResultsCount = document.getElementById('pageModalResultsCount');
+  let currentModalPage = null;
+
+  function renderPageModalGrid(page){
+    const list = filteredProjects(page);
+    pageModalResultsCount.textContent = `${list.length} proje bulundu`;
+
+    if(list.length === 0){
+      const msg = page === 'library'
+        ? '📌 Kütüphanende henüz proje yok. Proje Önerileri sayfasındaki ➕ butonuna tıklayarak fikir kaydedebilirsin.'
+        : '⭐ Henüz favori işaretlediğin bir proje yok. Beğendiğin kartlardaki ☆ butonuna tıklayarak favorilerine ekleyebilirsin.';
+      pageModalGrid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${msg}</div>`;
       return;
     }
 
-    const showGuideButton = state.page === 'library';
-    grid.innerHTML = list.map(p => cardHTML(p, false, null, showGuideButton)).join('');
-    attachCardHandlers(grid);
+    const showGuideButton = page === 'library';
+    pageModalGrid.innerHTML = list.map(p => cardHTML(p, false, null, showGuideButton)).join('');
+    attachCardHandlers(pageModalGrid);
   }
+
+  function openPageModal(page){
+    currentModalPage = page;
+    const meta = PAGE_META[page];
+    document.getElementById('pageModalTitle').textContent = `${meta.icon} ${meta.title}`;
+    document.getElementById('pageModalSubtitle').textContent = meta.subtitle;
+    document.querySelectorAll('.nav-item[data-modal-page]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-modal-page') === page);
+    });
+    renderPageModalGrid(page);
+    pageModalOverlay.classList.add('show');
+  }
+  function closePageModal(){
+    pageModalOverlay.classList.remove('show');
+    currentModalPage = null;
+    document.querySelectorAll('.nav-item[data-modal-page]').forEach(btn => btn.classList.remove('active'));
+  }
+  pageModalCloseBtn.addEventListener('click', closePageModal);
+  pageModalOverlay.addEventListener('click', (e) => {
+    if(e.target === pageModalOverlay) closePageModal();
+  });
 
   // ---- Navigasyon menüsü (sayfa geçişleri ve eylemler) ----
   const navList = document.getElementById('navList');
@@ -3022,8 +3072,15 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
     if(pageBtn){
       state.page = pageBtn.getAttribute('data-page');
       closeDrawer();
+      closePageModal();
       render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const modalPageBtn = e.target.closest('.nav-item[data-modal-page]');
+    if(modalPageBtn){
+      closeDrawer();
+      openPageModal(modalPageBtn.getAttribute('data-modal-page'));
       return;
     }
     const actionBtn = e.target.closest('.nav-item[data-action]');
@@ -3041,11 +3098,6 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
       }else if(action === 'devtools'){
         openDevToolsModal();
       }else if(action === 'readme'){
-        if(state.page !== 'suggestions'){
-          state.page = 'suggestions';
-          render();
-        }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
         showHintToast('📄 Bir proje kartındaki "README Oluştur" butonuna tıkla');
       }
     }
@@ -3536,6 +3588,7 @@ Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo
       if(settingsModalOverlay.classList.contains('show')) closeSettingsModal();
       if(devToolsModalOverlay.classList.contains('show')) closeDevToolsModal();
       if(readmeModalOverlay.classList.contains('show')) closeReadmeModal();
+      if(pageModalOverlay.classList.contains('show')) closePageModal();
       if(drawerOverlay.classList.contains('show')) closeDrawer();
     }
   });
