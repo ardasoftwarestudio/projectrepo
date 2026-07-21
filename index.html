@@ -59,47 +59,33 @@
     font-size:1.02rem;
   }
 
-  /* Top-right floating action buttons */
+  /* Sağ üst hamburger menü butonu */
   .top-actions{
     position:fixed;
     top:22px;
     right:22px;
     z-index:60;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    align-items:flex-end;
   }
-  .top-action-btn{
+  .hamburger-btn{
+    position:relative;
     display:flex;
     align-items:center;
-    gap:8px;
+    justify-content:center;
+    width:52px;height:52px;
+    border-radius:50%;
     background:var(--surface);
     border:1px solid var(--border);
     color:var(--text);
-    padding:11px 18px;
-    border-radius:999px;
     cursor:pointer;
-    font-weight:600;
-    font-size:.86rem;
+    font-size:1.35rem;
     box-shadow:var(--shadow);
     transition:all .15s ease;
-    white-space:nowrap;
   }
-  .top-action-btn:hover{
+  .hamburger-btn:hover{
     border-color:var(--accent-2);
     color:var(--accent-2);
     transform:translateY(-2px);
     box-shadow:0 14px 30px rgba(34,211,238,.2);
-  }
-  #addIdeaBtn .plus{
-    font-size:1.15rem;
-    line-height:1;
-    font-weight:700;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
   }
   .settings-dot{
     width:8px;height:8px;border-radius:50%;
@@ -108,42 +94,108 @@
     flex:0 0 auto;
   }
   .settings-dot.connected{background:var(--green);box-shadow:0 0 8px rgba(63,185,80,.6);}
+  .hamburger-btn .settings-dot{
+    position:absolute;
+    top:6px;
+    right:6px;
+    border:2px solid var(--surface);
+  }
   @media (max-width:640px){
-    .top-action-btn span.label{display:none;}
-    .top-action-btn{padding:12px;}
     .top-actions{top:16px;right:16px;}
+    .hamburger-btn{width:46px;height:46px;font-size:1.2rem;}
   }
 
-  /* Sol üst profil köşesi */
-  .profile-corner{
+  /* Yandan açılan Kontrol & Ayarlar Paneli (Drawer) */
+  .drawer-overlay{
     position:fixed;
-    top:22px;
-    left:22px;
-    z-index:60;
+    inset:0;
+    background:rgba(4,6,10,.6);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    z-index:150;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
   }
-  .auth-btn-compact{
+  .drawer-overlay.show{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .drawer-panel{
+    position:fixed;
+    top:0;right:0;bottom:0;
+    width:380px;
+    max-width:92vw;
+    background:var(--surface);
+    border-left:1px solid var(--border);
+    box-shadow:-20px 0 60px rgba(0,0,0,.5);
+    transform:translateX(100%);
+    transition:transform .32s cubic-bezier(.2,.9,.3,1.1);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .drawer-overlay.show .drawer-panel{transform:translateX(0);}
+  .drawer-header{
     display:flex;
     align-items:center;
-    gap:8px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    color:var(--text);
-    padding:9px 16px;
-    border-radius:999px;
-    cursor:pointer;
-    font-weight:600;
-    font-size:.82rem;
-    box-shadow:var(--shadow);
-    transition:all .15s ease;
-    white-space:nowrap;
+    justify-content:space-between;
+    padding:20px 22px;
+    border-bottom:1px solid var(--border);
+    flex:0 0 auto;
   }
-  .auth-btn-compact:hover{border-color:var(--accent-2);color:var(--accent-2);transform:translateY(-2px);}
-  @media (max-width:640px){
-    .profile-corner{top:16px;left:16px;}
-    .profile-corner .auth-profile .name{max-width:90px;}
+  .drawer-header h2{margin:0;font-size:1.1rem;}
+  .drawer-close{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    font-size:1.4rem;
+    cursor:pointer;
+    line-height:1;
+    padding:4px 8px;
+    border-radius:8px;
+  }
+  .drawer-close:hover{color:var(--text);background:var(--bg-alt);}
+  .drawer-body{
+    flex:1;
+    overflow-y:auto;
+    padding:22px;
+  }
+  @media (max-width:520px){
+    .drawer-panel{width:100%;max-width:100%;}
   }
 
-  /* XP / Seviye barı (Gamification) */
+  /* Panel içindeki detaylı XP/Seviye kartı */
+  .xp-detail-card{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px;
+  }
+  .xp-detail-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .xp-detail-badge{
+    width:46px;height:46px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:1.1rem;color:#0b0d12;
+    box-shadow:0 0 14px rgba(124,92,255,.5);
+    flex:0 0 auto;
+  }
+  .xp-detail-title{font-weight:800;font-size:.95rem;}
+  .xp-detail-sub{font-size:.75rem;color:var(--text-dim);}
+  .xp-detail-stats{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    font-size:.72rem;
+    color:var(--text-dim);
+    margin-top:8px;
+    flex-wrap:wrap;
+  }
+  .xp-detail-total{font-size:.78rem;color:var(--text-dim);margin-top:10px;}
+  .xp-detail-total strong{color:var(--text);}
+
+  /* XP / Seviye barı (Gamification) — ana ekran, minimal */
   .xp-bar-wrap{
     max-width:640px;
     margin:0 auto 22px;
@@ -220,20 +272,6 @@
     0%{background-position:0% 0;}
     100%{background-position:200% 0;}
   }
-  .mute-btn{
-    flex:0 0 auto;
-    width:38px;height:38px;
-    border-radius:50%;
-    background:var(--bg-alt);
-    border:1px solid var(--border);
-    color:var(--text);
-    cursor:pointer;
-    font-size:1rem;
-    display:flex;align-items:center;justify-content:center;
-    transition:all .15s ease;
-  }
-  .mute-btn:hover{border-color:var(--accent-2);color:var(--accent-2);}
-
   .xp-gain-toast{
     position:absolute;
     top:-6px;
@@ -253,7 +291,6 @@
     80%{opacity:1; transform:translateY(-26px);}
     100%{opacity:0; transform:translateY(-34px);}
   }
-
   @media (max-width:560px){
     .xp-bar-wrap{padding:12px 14px;gap:10px;}
     .xp-level-badge{width:44px;height:44px;}
@@ -381,6 +418,33 @@
   .progress-seg.done{background:var(--green);}
 
   /* Google hesap girişi: sol üst profil köşesi bu stilleri kullanır */
+  .profile-corner{
+    position:fixed;
+    top:22px;
+    left:22px;
+    z-index:60;
+  }
+  .auth-btn-compact{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 16px;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:.82rem;
+    box-shadow:var(--shadow);
+    transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .auth-btn-compact:hover{border-color:var(--accent-2);color:var(--accent-2);transform:translateY(-2px);}
+  @media (max-width:640px){
+    .profile-corner{top:16px;left:16px;}
+    .profile-corner .auth-profile .name{max-width:90px;}
+  }
   .auth-profile{
     display:flex;
     align-items:center;
@@ -452,7 +516,7 @@
   .api-saved{font-size:.75rem;color:var(--green);margin-top:6px;height:16px;opacity:0;transition:opacity .3s ease;}
   .api-saved.show{opacity:1;}
 
-  /* Ayarlar modalı bölümleri */
+  /* Panel içindeki bölümler (API key, XP, ses, veri yönetimi, tehlikeli bölge) */
   .settings-section{
     margin-bottom:22px;
     padding-bottom:20px;
@@ -1088,11 +1152,9 @@
 </head>
 <body>
 <div class="top-actions">
-  <button id="settingsBtn" class="top-action-btn" type="button" title="Ayarlar">
-    <span class="settings-dot" id="settingsDot"></span>⚙️<span class="label"> Ayarlar</span>
-  </button>
-  <button id="addIdeaBtn" class="top-action-btn" type="button">
-    <span class="plus">+</span><span class="label">Yeni Fikir Ekle</span>
+  <button id="hamburgerBtn" class="hamburger-btn" type="button" title="Kontrol & Ayarlar Paneli">
+    🍔
+    <span class="settings-dot" id="hamburgerDot"></span>
   </button>
 </div>
 <div class="profile-corner" id="profileCorner">
@@ -1106,6 +1168,72 @@
   <div class="level-up-emoji">🎉</div>
   <div class="level-up-title">Seviye Atladın!</div>
   <div class="level-up-sub" id="levelUpSub">Level 2 · Junior Coder</div>
+</div>
+
+<!-- Yandan açılan Kontrol & Ayarlar Paneli -->
+<div class="drawer-overlay" id="drawerOverlay">
+  <div class="drawer-panel" id="drawerPanel" role="dialog" aria-label="Kontrol ve Ayarlar Paneli">
+    <div class="drawer-header">
+      <h2>🍔 Kontrol & Ayarlar Paneli</h2>
+      <button class="drawer-close" id="drawerCloseBtn" type="button">×</button>
+    </div>
+    <div class="drawer-body">
+
+      <div class="settings-section">
+        <button type="button" class="btn-primary" id="drawerAddIdeaBtn" style="width:100%;">+ Yeni Fikir Ekle</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">🔑 Gemini API Anahtarı</div>
+        <div class="api-input-row">
+          <input type="password" id="apiKeyInput" placeholder="Gemini API anahtarını yapıştır (AIza...)" autocomplete="off" spellcheck="false">
+          <button type="button" id="toggleKeyVisibility" title="Göster/Gizle">👁</button>
+        </div>
+        <div class="api-saved" id="apiSavedMsg">Kaydedildi ✓</div>
+        <p class="api-hint">Anahtarın yalnızca bu tarayıcının LocalStorage'ında saklanır, hiçbir sunucuya gönderilmez. Google AI Studio üzerinden ücretsiz bir anahtar alabilirsin.</p>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">🏆 Geliştirici Durumu</div>
+        <div class="xp-detail-card">
+          <div class="xp-detail-top">
+            <div class="xp-detail-badge"><span id="drawerLevelNum">1</span></div>
+            <div>
+              <div class="xp-detail-title" id="drawerXpTitle">🌱 Junior Coder</div>
+              <div class="xp-detail-sub" id="drawerXpSub">Seviye 1</div>
+            </div>
+          </div>
+          <div class="xp-track"><div class="xp-fill" id="drawerXpFill"></div></div>
+          <div class="xp-detail-stats">
+            <span id="drawerXpAmount">0 / 100 XP</span>
+            <span id="drawerXpRemaining">Sonraki seviyeye 100 XP</span>
+          </div>
+          <div class="xp-detail-total">Toplam kazanılan XP: <strong id="drawerXpTotal">0</strong></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">🔊 Ses Efektleri</div>
+        <button type="button" class="btn-secondary" id="drawerMuteBtn" style="width:100%;">🔊 Sesler Açık</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">💾 Veri Yönetimi</div>
+        <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Özel/AI fikirlerini, durumlarını ve XP ilerlemeni JSON olarak indir, başka bir cihazda geri yükle.</p>
+        <div class="settings-btn-row">
+          <button type="button" class="btn-secondary" id="settingsExportBtn">📤 Dışa Aktar</button>
+          <button type="button" class="btn-secondary" id="settingsImportBtn">📥 İçe Aktar</button>
+        </div>
+      </div>
+
+      <div class="settings-section danger">
+        <div class="settings-section-title">⚠️ Tehlikeli Bölge</div>
+        <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni ve XP/seviye ilerlemeni bu cihazdan siler. Bu işlem geri alınamaz.</p>
+        <button type="button" class="btn-secondary danger-btn" id="resetDataBtn">🗑 Tüm Verileri Sıfırla</button>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <div class="wrap">
@@ -1129,8 +1257,15 @@
       </div>
       <div class="xp-gain-toast" id="xpGainToast"></div>
     </div>
-    <button class="mute-btn" id="muteBtn" type="button" title="Sesi Kapat/Aç">🔊</button>
   </div>
+
+  <div class="random-bar">
+    <button id="randomBtn">🎲 Bana Rastgele Bir Proje Ver!</button>
+    <button id="aiBtn">✨ AI ile Yeni Fikir Üret</button>
+  </div>
+  <div class="ai-status" id="aiStatusMsg"></div>
+
+  <div class="spotlight" id="spotlight"></div>
 
   <div class="stats-bar" id="statsBar">
     <div class="stat-card idea">
@@ -1154,14 +1289,6 @@
     <div class="progress-seg progress" id="progressProgress"></div>
     <div class="progress-seg done" id="progressDone"></div>
   </div>
-
-  <div class="random-bar">
-    <button id="randomBtn">🎲 Bana Rastgele Bir Proje Ver!</button>
-    <button id="aiBtn">✨ AI ile Yeni Fikir Üret</button>
-  </div>
-  <div class="ai-status" id="aiStatusMsg"></div>
-
-  <div class="spotlight" id="spotlight"></div>
 
   <div class="view-toggle" id="viewToggle">
     <button type="button" data-view="all" class="active">Öneriler</button>
@@ -1251,48 +1378,6 @@
   </div>
 </div>
 
-<!-- Ayarlar modalı -->
-<div class="modal-overlay" id="settingsModalOverlay">
-  <div class="modal-box" id="settingsModalBox">
-    <div class="modal-header">
-      <div>
-        <h2>⚙️ Ayarlar</h2>
-        <p class="sub">API anahtarını yönet, verilerini yedekle ya da geri yükle.</p>
-      </div>
-      <button class="modal-close" id="settingsModalCloseBtn" type="button">×</button>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">🔑 Gemini API Anahtarı</div>
-      <div class="api-input-row">
-        <input type="password" id="apiKeyInput" placeholder="Gemini API anahtarını yapıştır (AIza...)" autocomplete="off" spellcheck="false">
-        <button type="button" id="toggleKeyVisibility" title="Göster/Gizle">👁</button>
-      </div>
-      <div class="api-saved" id="apiSavedMsg">Kaydedildi ✓</div>
-      <p class="api-hint">Anahtarın yalnızca bu tarayıcının LocalStorage'ında saklanır, hiçbir sunucuya gönderilmez. Google AI Studio üzerinden ücretsiz bir anahtar alabilirsin.</p>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">💾 Veri Yönetimi</div>
-      <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Özel/AI fikirlerini, durumlarını ve XP ilerlemeni JSON olarak indir, başka bir cihazda geri yükle.</p>
-      <div class="settings-btn-row">
-        <button type="button" class="btn-secondary" id="settingsExportBtn">📤 Dışa Aktar</button>
-        <button type="button" class="btn-secondary" id="settingsImportBtn">📥 İçe Aktar</button>
-      </div>
-    </div>
-
-    <div class="settings-section danger">
-      <div class="settings-section-title">⚠️ Tehlikeli Bölge</div>
-      <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni ve XP/seviye ilerlemeni bu cihazdan siler. Bu işlem geri alınamaz.</p>
-      <button type="button" class="btn-secondary danger-btn" id="resetDataBtn">🗑 Tüm Verileri Sıfırla</button>
-    </div>
-
-    <div class="modal-actions">
-      <button type="button" class="btn-primary" id="settingsDoneBtn">Kapat</button>
-    </div>
-  </div>
-</div>
-
 <!-- Firebase Authentication + Firestore (ortak kurulum: firebase-init.js) -->
 <script type="module" src="firebase-init.js"></script>
 
@@ -1303,9 +1388,6 @@
   // Google modelleri zaman zaman kullanımdan kaldırıyor / yeni hesaplara kapatıyor,
   // ayrıca bazen geçici olarak "yoğun talep" (503) hatası verebiliyor.
   // Bu yüzden tek bir model adına bağlı kalmak yerine, sırayla bir liste deniyoruz.
-  // Liste 2026-07 itibarıyla Google'ın güncel model dokümantasyonuna göre güncellendi:
-  // "gemini-2.5-flash-lite" yeni hesaplara kapatıldığı için listeden çıkarıldı,
-  // yerine güncel nesil "gemini-3.1-flash-lite" eklendi.
   const MODEL_CANDIDATES = [
     "gemini-flash-latest",
     "gemini-3.5-flash",
@@ -1867,14 +1949,34 @@
   }
   function updateXpUI(){
     const info = computeLevelInfo(totalXp);
+    const title = getTitleForLevel(info.level);
+    const pct = Math.min(100, (info.xpIntoLevel / info.xpNeeded) * 100);
+
+    // Ana ekrandaki minimal XP barı
     const levelNumEl = document.getElementById('xpLevelNum');
     const titleEl = document.getElementById('xpTitle');
     const amountEl = document.getElementById('xpAmount');
     const fillEl = document.getElementById('xpFill');
     if(levelNumEl) levelNumEl.textContent = info.level;
-    if(titleEl) titleEl.textContent = getTitleForLevel(info.level);
+    if(titleEl) titleEl.textContent = title;
     if(amountEl) amountEl.textContent = `${info.xpIntoLevel} / ${info.xpNeeded} XP`;
-    if(fillEl) fillEl.style.width = Math.min(100, (info.xpIntoLevel / info.xpNeeded) * 100) + '%';
+    if(fillEl) fillEl.style.width = pct + '%';
+
+    // Panel içindeki detaylı XP kartı
+    const drawerLevelEl = document.getElementById('drawerLevelNum');
+    const drawerTitleEl = document.getElementById('drawerXpTitle');
+    const drawerSubEl = document.getElementById('drawerXpSub');
+    const drawerFillEl = document.getElementById('drawerXpFill');
+    const drawerAmountEl = document.getElementById('drawerXpAmount');
+    const drawerRemainEl = document.getElementById('drawerXpRemaining');
+    const drawerTotalEl = document.getElementById('drawerXpTotal');
+    if(drawerLevelEl) drawerLevelEl.textContent = info.level;
+    if(drawerTitleEl) drawerTitleEl.textContent = title;
+    if(drawerSubEl) drawerSubEl.textContent = `Seviye ${info.level}`;
+    if(drawerFillEl) drawerFillEl.style.width = pct + '%';
+    if(drawerAmountEl) drawerAmountEl.textContent = `${info.xpIntoLevel} / ${info.xpNeeded} XP`;
+    if(drawerRemainEl) drawerRemainEl.textContent = `Sonraki seviyeye ${info.xpNeeded - info.xpIntoLevel} XP`;
+    if(drawerTotalEl) drawerTotalEl.textContent = totalXp;
   }
   function showXpToast(text){
     const el = document.getElementById('xpGainToast');
@@ -2015,9 +2117,9 @@
     notes.forEach((f, i) => playTone(f, now + i * 0.12, 0.28, 'sawtooth', 0.09));
   }
 
-  function refreshMuteBtnUI(){
-    const btn = document.getElementById('muteBtn');
-    if(btn) btn.textContent = isMuted() ? '🔇' : '🔊';
+  function refreshDrawerMuteBtn(){
+    const btn = document.getElementById('drawerMuteBtn');
+    if(btn) btn.textContent = isMuted() ? '🔇 Sesler Kapalı' : '🔊 Sesler Açık';
   }
 
   // ---- Retro Easter Egg: başlığa 5 hızlı tıklama -> Matrix yağmuru ----
@@ -2397,7 +2499,6 @@
 
   // ---- "Yeni Fikir Ekle" modalı ----
   const modalOverlay = document.getElementById('modalOverlay');
-  const addIdeaBtn = document.getElementById('addIdeaBtn');
   const modalCloseBtn = document.getElementById('modalCloseBtn');
   const cancelIdeaBtn = document.getElementById('cancelIdeaBtn');
   const ideaForm = document.getElementById('ideaForm');
@@ -2415,7 +2516,6 @@
     ideaForm.reset();
   }
 
-  addIdeaBtn.addEventListener('click', openModal);
   modalCloseBtn.addEventListener('click', closeModal);
   cancelIdeaBtn.addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', (e) => {
@@ -2502,32 +2602,39 @@
     if(e.target === guideModalOverlay) closeGuideModal();
   });
 
-  // ---- Ayarlar modalı ----
-  const settingsBtn = document.getElementById('settingsBtn');
-  const settingsModalOverlay = document.getElementById('settingsModalOverlay');
-  const settingsModalCloseBtn = document.getElementById('settingsModalCloseBtn');
-  const settingsDoneBtn = document.getElementById('settingsDoneBtn');
-  const settingsDot = document.getElementById('settingsDot');
+  // ---- Hamburger Menü / Kontrol & Ayarlar Paneli (Drawer) ----
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const hamburgerDot = document.getElementById('hamburgerDot');
+  const drawerOverlay = document.getElementById('drawerOverlay');
+  const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+  const drawerAddIdeaBtn = document.getElementById('drawerAddIdeaBtn');
   const resetDataBtn = document.getElementById('resetDataBtn');
 
   function refreshSettingsIndicator(){
     const key = loadApiKey();
-    settingsDot.classList.toggle('connected', !!key);
+    if(hamburgerDot) hamburgerDot.classList.toggle('connected', !!key);
   }
 
-  function openSettingsModal(){
+  function openDrawer(){
     apiKeyInput.value = loadApiKey();
-    settingsModalOverlay.classList.add('show');
+    updateXpUI();
+    refreshDrawerMuteBtn();
+    drawerOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
   }
-  function closeSettingsModal(){
-    settingsModalOverlay.classList.remove('show');
+  function closeDrawer(){
+    drawerOverlay.classList.remove('show');
+    document.body.style.overflow = '';
   }
 
-  settingsBtn.addEventListener('click', openSettingsModal);
-  settingsModalCloseBtn.addEventListener('click', closeSettingsModal);
-  settingsDoneBtn.addEventListener('click', closeSettingsModal);
-  settingsModalOverlay.addEventListener('click', (e) => {
-    if(e.target === settingsModalOverlay) closeSettingsModal();
+  hamburgerBtn.addEventListener('click', openDrawer);
+  drawerCloseBtn.addEventListener('click', closeDrawer);
+  drawerOverlay.addEventListener('click', (e) => {
+    if(e.target === drawerOverlay) closeDrawer();
+  });
+  drawerAddIdeaBtn.addEventListener('click', () => {
+    closeDrawer();
+    openModal();
   });
 
   resetDataBtn.addEventListener('click', () => {
@@ -2550,7 +2657,7 @@
     if(e.key === 'Escape'){
       if(modalOverlay.classList.contains('show')) closeModal();
       if(guideModalOverlay.classList.contains('show')) closeGuideModal();
-      if(settingsModalOverlay.classList.contains('show')) closeSettingsModal();
+      if(drawerOverlay.classList.contains('show')) closeDrawer();
     }
   });
 
@@ -2653,11 +2760,11 @@
   });
 
   // ---- Mute / Unmute ----
-  const muteBtn = document.getElementById('muteBtn');
-  refreshMuteBtnUI();
-  muteBtn.addEventListener('click', () => {
+  const drawerMuteBtn = document.getElementById('drawerMuteBtn');
+  refreshDrawerMuteBtn();
+  drawerMuteBtn.addEventListener('click', () => {
     setMuted(!isMuted());
-    refreshMuteBtnUI();
+    refreshDrawerMuteBtn();
   });
 
   // ---- Retro Easter Egg tetikleyicisi ----
@@ -2686,8 +2793,8 @@
   async function runAiGeneration(){
     const apiKey = loadApiKey().trim();
     if(!apiKey){
-      openSettingsModal();
-      setAiStatus('Önce Ayarlar menüsünden Gemini API anahtarını gir.', 'error');
+      openDrawer();
+      setAiStatus('Önce Panel içinden Gemini API anahtarını gir.', 'error');
       apiKeyInput.focus();
       return;
     }
