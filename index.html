@@ -105,7 +105,7 @@
     .hamburger-btn{width:46px;height:46px;font-size:1.2rem;}
   }
 
-  /* Yandan açılan Kontrol & Ayarlar Paneli (Drawer) */
+  /* Sol taraftan açılan Navigasyon Menüsü (Sidebar / Drawer) */
   .drawer-overlay{
     position:fixed;
     inset:0;
@@ -124,8 +124,8 @@
   .drawer-panel{
     position:fixed;
     top:0;right:0;bottom:0;
-    width:380px;
-    max-width:92vw;
+    width:340px;
+    max-width:88vw;
     background:var(--surface);
     border-left:1px solid var(--border);
     box-shadow:-20px 0 60px rgba(0,0,0,.5);
@@ -159,13 +159,57 @@
   .drawer-body{
     flex:1;
     overflow-y:auto;
-    padding:22px;
+    padding:18px;
   }
   @media (max-width:520px){
     .drawer-panel{width:100%;max-width:100%;}
   }
 
-  /* Panel içindeki detaylı XP/Seviye kartı */
+  /* Navigasyon menü listesi */
+  .nav-list{display:flex;flex-direction:column;gap:6px;}
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    background:none;
+    border:1px solid transparent;
+    color:var(--text-dim);
+    padding:14px 16px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:.92rem;
+    font-weight:600;
+    text-align:left;
+    transition:all .15s ease;
+  }
+  .nav-item:hover{background:var(--bg-alt);color:var(--text);border-color:var(--border);}
+  .nav-item.active{
+    background:linear-gradient(90deg, rgba(124,92,255,.2), rgba(34,211,238,.14));
+    border-color:rgba(124,92,255,.4);
+    color:var(--text);
+  }
+  .nav-item .nav-icon{font-size:1.15rem;flex:0 0 auto;}
+  .nav-item .nav-count{
+    margin-left:auto;
+    font-size:.72rem;
+    color:var(--text-dim);
+    background:var(--bg-alt);
+    padding:2px 8px;
+    border-radius:999px;
+    flex:0 0 auto;
+  }
+  .nav-divider{height:1px;background:var(--border);margin:14px 6px;}
+  .nav-section-label{
+    font-size:.68rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--text-dim);
+    font-weight:700;
+    padding:6px 16px 4px;
+  }
+
+  /* Panel içindeki detaylı XP/Seviye kartı (Ayarlar modalında) */
   .xp-detail-card{
     background:var(--bg-alt);
     border:1px solid var(--border);
@@ -417,6 +461,26 @@
   .progress-seg.progress{background:var(--yellow);}
   .progress-seg.done{background:var(--green);}
 
+  /* Ana ekran sayfa başlığı (Öneriler/Kütüphanem/Favorilerim yerine) */
+  .page-header{
+    max-width:900px;
+    margin:0 auto 20px;
+    text-align:center;
+  }
+  .page-header h2{
+    margin:0 0 6px;
+    font-size:1.5rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .page-header .page-subtitle{
+    color:var(--text-dim);
+    font-size:.88rem;
+    margin:0;
+  }
+
   /* Google hesap girişi: sol üst profil köşesi bu stilleri kullanır */
   .profile-corner{
     position:fixed;
@@ -516,7 +580,7 @@
   .api-saved{font-size:.75rem;color:var(--green);margin-top:6px;height:16px;opacity:0;transition:opacity .3s ease;}
   .api-saved.show{opacity:1;}
 
-  /* Panel içindeki bölümler (API key, XP, ses, veri yönetimi, tehlikeli bölge) */
+  /* Ayarlar modalı içindeki bölümler (API key, XP, ses, veri yönetimi, tehlikeli bölge) */
   .settings-section{
     margin-bottom:22px;
     padding-bottom:20px;
@@ -701,37 +765,6 @@
     display:none;
   }
   .spotlight.show{display:block;}
-
-  /* Görünüm anahtarı: Öneriler / Kütüphanem / Favorilerim */
-  .view-toggle{
-    display:flex;
-    gap:6px;
-    max-width:560px;
-    margin:0 auto 18px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:999px;
-    padding:5px;
-    flex-wrap:wrap;
-  }
-  .view-toggle button{
-    flex:1;
-    background:none;
-    border:none;
-    color:var(--text-dim);
-    padding:9px 14px;
-    border-radius:999px;
-    cursor:pointer;
-    font-size:.83rem;
-    font-weight:600;
-    transition:all .15s ease;
-    white-space:nowrap;
-  }
-  .view-toggle button:hover:not(.active){color:var(--text);}
-  .view-toggle button.active{
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    color:#0b0d12;
-  }
 
   /* Search bar */
   .search-section{
@@ -1301,7 +1334,7 @@
 </head>
 <body>
 <div class="top-actions">
-  <button id="hamburgerBtn" class="hamburger-btn" type="button" title="Kontrol & Ayarlar Paneli">
+  <button id="hamburgerBtn" class="hamburger-btn" type="button" title="Navigasyon Menüsü">
     🍔
     <span class="settings-dot" id="hamburgerDot"></span>
   </button>
@@ -1319,68 +1352,47 @@
   <div class="level-up-sub" id="levelUpSub">Level 2 · Junior Coder</div>
 </div>
 
-<!-- Yandan açılan Kontrol & Ayarlar Paneli -->
+<!-- Sol/sağdan açılan Navigasyon Menüsü (Sidebar) -->
 <div class="drawer-overlay" id="drawerOverlay">
-  <div class="drawer-panel" id="drawerPanel" role="dialog" aria-label="Kontrol ve Ayarlar Paneli">
+  <div class="drawer-panel" id="drawerPanel" role="dialog" aria-label="Navigasyon Menüsü">
     <div class="drawer-header">
-      <h2>🍔 Kontrol & Ayarlar Paneli</h2>
+      <h2>🧭 Navigasyon Menüsü</h2>
       <button class="drawer-close" id="drawerCloseBtn" type="button">×</button>
     </div>
     <div class="drawer-body">
+      <div class="nav-section-label">Sayfalar</div>
+      <div class="nav-list" id="navList">
+        <button type="button" class="nav-item" data-page="suggestions">
+          <span class="nav-icon">💡</span>
+          <span>Proje Önerileri</span>
+        </button>
+        <button type="button" class="nav-item" data-page="library">
+          <span class="nav-icon">📚</span>
+          <span>Kütüphanem</span>
+          <span class="nav-count" id="libraryCount">0</span>
+        </button>
+        <button type="button" class="nav-item" data-page="favorites">
+          <span class="nav-icon">⭐</span>
+          <span>Favorilerim</span>
+          <span class="nav-count" id="favoriteCount">0</span>
+        </button>
 
-      <div class="settings-section">
-        <button type="button" class="btn-primary" id="drawerAddIdeaBtn" style="width:100%;">+ Yeni Fikir Ekle</button>
+        <div class="nav-divider"></div>
+        <div class="nav-section-label">Eylemler</div>
+
+        <button type="button" class="nav-item" data-action="ai">
+          <span class="nav-icon">✨</span>
+          <span>AI ile Fikir Üret</span>
+        </button>
+        <button type="button" class="nav-item" data-action="add">
+          <span class="nav-icon">➕</span>
+          <span>Yeni Fikir Ekle</span>
+        </button>
+        <button type="button" class="nav-item" data-action="settings">
+          <span class="nav-icon">🔑</span>
+          <span>Gemini API & Sistem Ayarları</span>
+        </button>
       </div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">🔑 Gemini API Anahtarı</div>
-        <div class="api-input-row">
-          <input type="password" id="apiKeyInput" placeholder="Gemini API anahtarını yapıştır (AIza...)" autocomplete="off" spellcheck="false">
-          <button type="button" id="toggleKeyVisibility" title="Göster/Gizle">👁</button>
-        </div>
-        <div class="api-saved" id="apiSavedMsg">Kaydedildi ✓</div>
-        <p class="api-hint">Anahtarın yalnızca bu tarayıcının LocalStorage'ında saklanır, hiçbir sunucuya gönderilmez. Google AI Studio üzerinden ücretsiz bir anahtar alabilirsin.</p>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">🏆 Geliştirici Durumu</div>
-        <div class="xp-detail-card">
-          <div class="xp-detail-top">
-            <div class="xp-detail-badge"><span id="drawerLevelNum">1</span></div>
-            <div>
-              <div class="xp-detail-title" id="drawerXpTitle">🌱 Junior Coder</div>
-              <div class="xp-detail-sub" id="drawerXpSub">Seviye 1</div>
-            </div>
-          </div>
-          <div class="xp-track"><div class="xp-fill" id="drawerXpFill"></div></div>
-          <div class="xp-detail-stats">
-            <span id="drawerXpAmount">0 / 100 XP</span>
-            <span id="drawerXpRemaining">Sonraki seviyeye 100 XP</span>
-          </div>
-          <div class="xp-detail-total">Toplam kazanılan XP: <strong id="drawerXpTotal">0</strong></div>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">🔊 Ses Efektleri</div>
-        <button type="button" class="btn-secondary" id="drawerMuteBtn" style="width:100%;">🔊 Sesler Açık</button>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">💾 Veri Yönetimi</div>
-        <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Özel/AI fikirlerini, durumlarını, favorilerini ve XP ilerlemeni JSON olarak indir, başka bir cihazda geri yükle.</p>
-        <div class="settings-btn-row">
-          <button type="button" class="btn-secondary" id="settingsExportBtn">📤 Dışa Aktar</button>
-          <button type="button" class="btn-secondary" id="settingsImportBtn">📥 İçe Aktar</button>
-        </div>
-      </div>
-
-      <div class="settings-section danger">
-        <div class="settings-section-title">⚠️ Tehlikeli Bölge</div>
-        <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni, favorilerini ve XP/seviye ilerlemeni bu cihazdan siler. Bu işlem geri alınamaz.</p>
-        <button type="button" class="btn-secondary danger-btn" id="resetDataBtn">🗑 Tüm Verileri Sıfırla</button>
-      </div>
-
     </div>
   </div>
 </div>
@@ -1449,10 +1461,9 @@
     <div class="progress-seg done" id="progressDone"></div>
   </div>
 
-  <div class="view-toggle" id="viewToggle">
-    <button type="button" data-view="all" class="active">Öneriler</button>
-    <button type="button" data-view="library">🔖 Kütüphanem (<span id="libraryCount">0</span>)</button>
-    <button type="button" data-view="favorites">⭐ Favorilerim (<span id="favoriteCount">0</span>)</button>
+  <div class="page-header" id="pageHeader">
+    <h2 id="pageTitle">💡 Proje Önerileri</h2>
+    <p class="page-subtitle" id="pageSubtitle">Yeni bir şey inşa etmek için ilham al.</p>
   </div>
 
   <div class="search-section" id="searchSection">
@@ -1559,6 +1570,68 @@
   </div>
 </div>
 
+<!-- 🔑 Gemini API & Sistem Ayarları modalı -->
+<div class="modal-overlay" id="settingsModalOverlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <h2>🔑 Gemini API & Sistem Ayarları</h2>
+        <p class="sub">API anahtarını, ses ayarlarını ve verilerini buradan yönetebilirsin.</p>
+      </div>
+      <button class="modal-close" id="settingsModalCloseBtn" type="button">×</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">🔑 Gemini API Anahtarı</div>
+      <div class="api-input-row">
+        <input type="password" id="apiKeyInput" placeholder="Gemini API anahtarını yapıştır (AIza...)" autocomplete="off" spellcheck="false">
+        <button type="button" id="toggleKeyVisibility" title="Göster/Gizle">👁</button>
+      </div>
+      <div class="api-saved" id="apiSavedMsg">Kaydedildi ✓</div>
+      <p class="api-hint">Anahtarın yalnızca bu tarayıcının LocalStorage'ında saklanır, hiçbir sunucuya gönderilmez. Google AI Studio üzerinden ücretsiz bir anahtar alabilirsin.</p>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">🏆 Geliştirici Durumu</div>
+      <div class="xp-detail-card">
+        <div class="xp-detail-top">
+          <div class="xp-detail-badge"><span id="drawerLevelNum">1</span></div>
+          <div>
+            <div class="xp-detail-title" id="drawerXpTitle">🌱 Junior Coder</div>
+            <div class="xp-detail-sub" id="drawerXpSub">Seviye 1</div>
+          </div>
+        </div>
+        <div class="xp-track"><div class="xp-fill" id="drawerXpFill"></div></div>
+        <div class="xp-detail-stats">
+          <span id="drawerXpAmount">0 / 100 XP</span>
+          <span id="drawerXpRemaining">Sonraki seviyeye 100 XP</span>
+        </div>
+        <div class="xp-detail-total">Toplam kazanılan XP: <strong id="drawerXpTotal">0</strong></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">🔊 Ses Efektleri</div>
+      <button type="button" class="btn-secondary" id="drawerMuteBtn" style="width:100%;">🔊 Sesler Açık</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">💾 Veri Yönetimi</div>
+      <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Özel/AI fikirlerini, durumlarını, favorilerini ve XP ilerlemeni JSON olarak indir, başka bir cihazda geri yükle.</p>
+      <div class="settings-btn-row">
+        <button type="button" class="btn-secondary" id="settingsExportBtn">📤 Dışa Aktar</button>
+        <button type="button" class="btn-secondary" id="settingsImportBtn">📥 İçe Aktar</button>
+      </div>
+    </div>
+
+    <div class="settings-section danger">
+      <div class="settings-section-title">⚠️ Tehlikeli Bölge</div>
+      <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni, favorilerini ve XP/seviye ilerlemeni bu cihazdan siler. Bu işlem geri alınamaz.</p>
+      <button type="button" class="btn-secondary danger-btn" id="resetDataBtn">🗑 Tüm Verileri Sıfırla</button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase Authentication + Firestore (ortak kurulum: firebase-init.js) -->
 <script type="module" src="firebase-init.js"></script>
 
@@ -1625,16 +1698,13 @@
         lastError = err;
         const msg = (err && err.message) ? err.message : '';
         if(!RETRYABLE_ERROR_PATTERN.test(msg)){
-          // Örn. geçersiz API anahtarı gibi kalıcı bir hata — başka model denemenin anlamı yok.
           throw err;
         }
-        // Aksi halde (model yok / geçici yoğunluk) sıradaki modeli dene.
       }
     }
     throw lastError || new Error("Hiçbir model yanıt vermedi.");
   }
 
-  // Diğer (klasik) script bu fonksiyonu window üzerinden çağırır.
   window.__generateAIProjectIdea = async function(apiKey, { difficulty, category }){
     const genAI = new GoogleGenerativeAI(apiKey);
     const prompt = `Zorluk seviyesi "${difficulty}" olan, "${category}" kategorisinde, daha önce çok fazla tekrarlanmamış yaratıcı bir yazılım proje fikri üret.`;
@@ -1643,8 +1713,6 @@
       return await tryAllModels(genAI, prompt);
     }catch(err){
       const msg = (err && err.message) ? err.message : '';
-      // Tüm modeller geçici yoğunluk/kota hatası verdiyse, kısa bir bekleme
-      // sonrası listeyi bir kez daha baştan dene (tek seferlik ek deneme).
       if(RETRYABLE_ERROR_PATTERN.test(msg)){
         await sleep(1500);
         return await tryAllModels(genAI, prompt);
@@ -1885,7 +1953,6 @@
     }
   ];
 
-  // ---- LocalStorage anahtarları ----
   const LS_CUSTOM_PROJECTS = 'pfb_custom_projects_v1';
   const LS_STATUS_MAP = 'pfb_status_map_v1';
   const LS_API_KEY = 'pfb_gemini_api_key_v1';
@@ -1905,7 +1972,6 @@
   };
   const REAL_DIFFICULTIES = ['Başlangıç', 'Orta', 'İleri'];
 
-  // Kartlardaki "🗺️ Yol Haritası" modalında gösterilen standart 4 adım.
   const ROADMAP_STEPS = [
     "Veritabanı ve Mimari Planlama",
     "UI/UX Tasarımı ve Arayüz Bileşenleri",
@@ -1913,10 +1979,8 @@
     "Test, Optimizasyon ve Yayına Alma (Deploy)"
   ];
 
-  // 🎡 Kader Çarkı dilim renkleri
   const WHEEL_COLORS = ['#7c5cff', '#22d3ee', '#f472b6', '#3fb950', '#e3b341', '#f85149', '#8b5cf6', '#06b6d4'];
 
-  // ---- Gamification (XP / Seviye) sabitleri ----
   const XP_REWARDS = { 'Başlangıç': 50, 'Orta': 100, 'İleri': 200 };
   const DAILY_BONUS_XP = 50;
   const LEVEL_TITLES = [
@@ -1928,6 +1992,12 @@
     { min: 13, title: "🎯 Tech Lead" },
     { min: 16, title: "👑 Studio CEO" }
   ];
+
+  const PAGE_META = {
+    suggestions: { icon: '💡', title: 'Proje Önerileri', subtitle: 'Yeni bir şey inşa etmek için ilham al.' },
+    library: { icon: '📚', title: 'Kütüphanem', subtitle: 'Devam eden ve tamamladığın projelerin.' },
+    favorites: { icon: '⭐', title: 'Favorilerim', subtitle: 'Yıldızladığın projeler burada.' }
+  };
 
   const GOOGLE_ICON_SVG = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
     <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
@@ -2039,7 +2109,6 @@
     return favoriteIds.has(String(id));
   }
 
-  // ---- ⏱️ Tahmini süre hesaplama (zorluk + teknoloji + özellik sayısına göre) ----
   function estimateHours(p){
     const diffBase = { 'Başlangıç': 4, 'Orta': 10, 'İleri': 20 };
     const base = diffBase[p.difficulty] || 8;
@@ -2048,7 +2117,6 @@
     return Math.max(1, Math.round(base + techFactor + featFactor));
   }
 
-  // ---- 🔥 Günün Görevi (Daily Challenge): tarihe göre deterministik proje seçimi ----
   function getDailyChallengeProject(){
     const today = new Date();
     const dateKey = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
@@ -2077,7 +2145,6 @@
     bonusEl.textContent = dailyState.bonusAwarded ? '✅ Bonus Alındı' : ('+' + DAILY_BONUS_XP + ' XP Bonus');
   }
 
-  // ---- Bulut senkronizasyonu (giriş yapılmışsa) ----
   let cloudSaveTimeout = null;
   function setSyncStatus(state){
     const el = document.getElementById('syncStatusText');
@@ -2202,7 +2269,6 @@
     }
   }
 
-  // ---- XP / Seviye mantığı ----
   function xpRequiredForLevel(level){
     return 100 + (level - 1) * 60;
   }
@@ -2229,7 +2295,6 @@
     const title = getTitleForLevel(info.level);
     const pct = Math.min(100, (info.xpIntoLevel / info.xpNeeded) * 100);
 
-    // Ana ekrandaki minimal XP barı
     const levelNumEl = document.getElementById('xpLevelNum');
     const titleEl = document.getElementById('xpTitle');
     const amountEl = document.getElementById('xpAmount');
@@ -2239,7 +2304,6 @@
     if(amountEl) amountEl.textContent = `${info.xpIntoLevel} / ${info.xpNeeded} XP`;
     if(fillEl) fillEl.style.width = pct + '%';
 
-    // Panel içindeki detaylı XP kartı
     const drawerLevelEl = document.getElementById('drawerLevelNum');
     const drawerTitleEl = document.getElementById('drawerXpTitle');
     const drawerSubEl = document.getElementById('drawerXpSub');
@@ -2300,7 +2364,6 @@
       gained += XP_REWARDS[diff] || 100;
     }
 
-    // 🔥 Günün Görevi bonusu: bugünün görevi tamamlandıysa ve bonus daha önce alınmadıysa.
     if(String(dailyChallenge.project.id) === key && !dailyState.bonusAwarded){
       dailyState.bonusAwarded = true;
       saveDailyChallengeState(dailyState);
@@ -2326,7 +2389,6 @@
     }
   }
 
-  // ---- Konfeti ----
   function fireConfetti(opts){
     if(typeof window.confetti !== 'function') return;
     window.confetti(Object.assign({
@@ -2353,7 +2415,6 @@
     })();
   }
 
-  // ---- Retro Web Audio ses efektleri ----
   let audioCtx = null;
   function getAudioCtx(){
     if(!audioCtx){
@@ -2411,7 +2472,6 @@
     if(btn) btn.textContent = isMuted() ? '🔇 Sesler Kapalı' : '🔊 Sesler Açık';
   }
 
-  // ---- Retro Easter Egg: başlığa 5 hızlı tıklama -> Matrix yağmuru ----
   function triggerEasterEgg(){
     const canvas = document.getElementById('matrixCanvas');
     const toast = document.getElementById('secretToast');
@@ -2455,7 +2515,6 @@
     }, 3000);
   }
 
-  // ---- Panoya kopyalama ve buton geri bildirimi ----
   function flashButtonFeedback(btn, text, duration){
     const original = btn.innerHTML;
     btn.innerHTML = text;
@@ -2499,7 +2558,6 @@
     return `Selam, bana "${p.name}" isimli projeyi yapmamda yardımcı ol. Kullanacağım teknolojiler: ${techStr}. Projenin temel özellikleri şunlar olacak:\n${featuresStr}\nBana başlangıç dosya yapısını ve temel mimariyi hazırlar mısın?`;
   }
 
-  // ---- DOM referansları ----
   const grid = document.getElementById('grid');
   const resultsCount = document.getElementById('resultsCount');
   const spotlight = document.getElementById('spotlight');
@@ -2508,13 +2566,12 @@
   const searchInput = document.getElementById('searchInput');
   const searchSection = document.getElementById('searchSection');
   const clearSearchBtn = document.getElementById('clearSearchBtn');
-  const viewToggle = document.getElementById('viewToggle');
 
   const state = {
     difficulty: 'Tümü',
     category: 'Tümü',
     search: '',
-    view: 'all'
+    page: 'suggestions'
   };
 
   const difficulties = ['Tümü', ...REAL_DIFFICULTIES];
@@ -2745,15 +2802,26 @@
 
   function filteredProjects(){
     return getAllProjects().filter(p => {
-      let viewMatch;
-      if(state.view === 'library') viewMatch = isInLibrary(p.id);
-      else if(state.view === 'favorites') viewMatch = isFavorite(p.id);
-      else viewMatch = !isInLibrary(p.id);
+      let pageMatch;
+      if(state.page === 'library') pageMatch = isInLibrary(p.id);
+      else if(state.page === 'favorites') pageMatch = isFavorite(p.id);
+      else pageMatch = !isInLibrary(p.id);
 
       return (state.difficulty === 'Tümü' || p.difficulty === state.difficulty) &&
         (state.category === 'Tümü' || p.category === state.category) &&
-        viewMatch &&
+        pageMatch &&
         matchesSearch(p, state.search);
+    });
+  }
+
+  function updatePageHeaderUI(){
+    const meta = PAGE_META[state.page] || PAGE_META.suggestions;
+    const titleEl = document.getElementById('pageTitle');
+    const subEl = document.getElementById('pageSubtitle');
+    if(titleEl) titleEl.textContent = `${meta.icon} ${meta.title}`;
+    if(subEl) subEl.textContent = meta.subtitle;
+    document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-page') === state.page);
     });
   }
 
@@ -2765,15 +2833,16 @@
     updateStatsUI();
     updateXpUI();
     updateDailyChallengeUI();
+    updatePageHeaderUI();
 
     const list = filteredProjects();
     resultsCount.textContent = `${list.length} proje bulundu`;
 
     if(list.length === 0){
       let msg;
-      if(state.view === 'library'){
-        msg = '📌 Kütüphanende henüz proje yok. Öneriler sekmesindeki ➕ butonuna tıklayarak fikir kaydedebilirsin.';
-      }else if(state.view === 'favorites'){
+      if(state.page === 'library'){
+        msg = '📌 Kütüphanende henüz proje yok. Proje Önerileri sayfasındaki ➕ butonuna tıklayarak fikir kaydedebilirsin.';
+      }else if(state.page === 'favorites'){
         msg = '⭐ Henüz favori işaretlediğin bir proje yok. Beğendiğin kartlardaki ☆ butonuna tıklayarak favorilerine ekleyebilirsin.';
       }else{
         msg = '🎉 Bu filtrelere uyan tüm önerileri zaten kütüphanene eklemişsin! Yeni fikir için 🎲 ya da ✨ AI butonunu dene, ya da filtreleri değiştir.';
@@ -2782,23 +2851,36 @@
       return;
     }
 
-    const showGuideButton = state.view === 'library';
+    const showGuideButton = state.page === 'library';
     grid.innerHTML = list.map(p => cardHTML(p, false, null, showGuideButton)).join('');
     attachCardHandlers(grid);
   }
 
-  // ---- Görünüm anahtarı: Öneriler / Kütüphanem / Favorilerim ----
-  viewToggle.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-view]');
-    if(!btn) return;
-    state.view = btn.getAttribute('data-view');
-    viewToggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
-    render();
-  });
-
-  // ---- Günün Görevi kartına tıklama -> Yol Haritası modalı ----
-  document.getElementById('dailyChallengeCard').addEventListener('click', () => {
-    openRoadmapModal(dailyChallenge.project);
+  // ---- Navigasyon menüsü (sayfa geçişleri ve eylemler) ----
+  const navList = document.getElementById('navList');
+  navList.addEventListener('click', (e) => {
+    const pageBtn = e.target.closest('.nav-item[data-page]');
+    if(pageBtn){
+      state.page = pageBtn.getAttribute('data-page');
+      closeDrawer();
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const actionBtn = e.target.closest('.nav-item[data-action]');
+    if(actionBtn){
+      const action = actionBtn.getAttribute('data-action');
+      closeDrawer();
+      if(action === 'ai'){
+        const bar = document.querySelector('.random-bar');
+        if(bar) bar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(runAiGeneration, 350);
+      }else if(action === 'add'){
+        openModal();
+      }else if(action === 'settings'){
+        openSettingsModal();
+      }
+    }
   });
 
   // ---- Arama ----
@@ -2931,7 +3013,6 @@
     document.getElementById('guideModalDoneBtn').addEventListener('click', closeGuideModal);
   }
 
-  // ---- 🗺️ Yol Haritası modalı (standart 4 adımlı yazılım geliştirme süreci) ----
   function openRoadmapModal(p){
     const tagsHTML = (p.tech || []).map(t => `<span class="tag">${t}</span>`).join('');
     const hours = estimateHours(p);
@@ -2991,6 +3072,11 @@
     if(e.target === guideModalOverlay) closeGuideModal();
   });
 
+  // ---- Günün Görevi kartına tıklama -> Yol Haritası modalı ----
+  document.getElementById('dailyChallengeCard').addEventListener('click', () => {
+    openRoadmapModal(dailyChallenge.project);
+  });
+
   // ---- 🎡 Kader Çarkı modalı ----
   const wheelModalOverlay = document.getElementById('wheelModalOverlay');
   const wheelCanvas = document.getElementById('wheelCanvas');
@@ -3045,7 +3131,6 @@
     wheelResultEl.textContent = '';
     drawWheel(wheelProjects);
     wheelModalOverlay.classList.add('show');
-    // Bir sonraki animasyon karesinde transition'ı geri aç (anlık sıfırlamanın animasyonsuz olması için).
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         wheelCanvas.style.transition = 'transform 4s cubic-bezier(.17,.67,.16,.99)';
@@ -3099,12 +3184,11 @@
     wheelCanvas.addEventListener('transitionend', onEnd);
   });
 
-  // ---- Hamburger Menü / Kontrol & Ayarlar Paneli (Drawer) ----
+  // ---- Hamburger Menü / Navigasyon Sidebar'ı ----
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const hamburgerDot = document.getElementById('hamburgerDot');
   const drawerOverlay = document.getElementById('drawerOverlay');
   const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-  const drawerAddIdeaBtn = document.getElementById('drawerAddIdeaBtn');
   const resetDataBtn = document.getElementById('resetDataBtn');
 
   function refreshSettingsIndicator(){
@@ -3113,9 +3197,7 @@
   }
 
   function openDrawer(){
-    apiKeyInput.value = loadApiKey();
-    updateXpUI();
-    refreshDrawerMuteBtn();
+    updatePageHeaderUI();
     drawerOverlay.classList.add('show');
     document.body.style.overflow = 'hidden';
   }
@@ -3129,9 +3211,23 @@
   drawerOverlay.addEventListener('click', (e) => {
     if(e.target === drawerOverlay) closeDrawer();
   });
-  drawerAddIdeaBtn.addEventListener('click', () => {
-    closeDrawer();
-    openModal();
+
+  // ---- 🔑 Gemini API & Sistem Ayarları modalı ----
+  const settingsModalOverlay = document.getElementById('settingsModalOverlay');
+  const settingsModalCloseBtn = document.getElementById('settingsModalCloseBtn');
+
+  function openSettingsModal(){
+    apiKeyInput.value = loadApiKey();
+    updateXpUI();
+    refreshDrawerMuteBtn();
+    settingsModalOverlay.classList.add('show');
+  }
+  function closeSettingsModal(){
+    settingsModalOverlay.classList.remove('show');
+  }
+  settingsModalCloseBtn.addEventListener('click', closeSettingsModal);
+  settingsModalOverlay.addEventListener('click', (e) => {
+    if(e.target === settingsModalOverlay) closeSettingsModal();
   });
 
   resetDataBtn.addEventListener('click', () => {
@@ -3159,6 +3255,7 @@
       if(modalOverlay.classList.contains('show')) closeModal();
       if(guideModalOverlay.classList.contains('show')) closeGuideModal();
       if(wheelModalOverlay.classList.contains('show')) closeWheelModal();
+      if(settingsModalOverlay.classList.contains('show')) closeSettingsModal();
       if(drawerOverlay.classList.contains('show')) closeDrawer();
     }
   });
@@ -3300,8 +3397,8 @@
   async function runAiGeneration(){
     const apiKey = loadApiKey().trim();
     if(!apiKey){
-      openDrawer();
-      setAiStatus('Önce Panel içinden Gemini API anahtarını gir.', 'error');
+      openSettingsModal();
+      setAiStatus('Önce Ayarlar içinden Gemini API anahtarını gir.', 'error');
       apiKeyInput.focus();
       return;
     }
@@ -3432,7 +3529,6 @@
       if(window.__firebaseConfigured === false){
         setGuestChosen();
       }else if(!user && !isGuestChosen()){
-        // Giriş yapılmamış ve misafir modu da seçilmemiş: ayrı giriş sayfasına yönlendir.
         window.location.href = 'login.html';
         return;
       }
@@ -3443,7 +3539,6 @@
       try{
         const cloudData = await window.__loadCloudData(user.uid);
         if(cloudData){
-          // Buluttaki veri varsa, o kazanır (diğer cihazdaki en güncel hal).
           customProjects = Array.isArray(cloudData.customProjects) ? cloudData.customProjects : [];
           statusMap = (cloudData.statusMap && typeof cloudData.statusMap === 'object') ? cloudData.statusMap : {};
           libraryIds = new Set((Array.isArray(cloudData.libraryIds) ? cloudData.libraryIds : []).map(String));
@@ -3453,7 +3548,6 @@
           saveLibraryIdsToLS(Array.from(libraryIds));
           saveFavoriteIdsToLS(Array.from(favoriteIds));
         }else{
-          // İlk giriş: mevcut yerel veriyi buluta yükle.
           await window.__saveCloudData(user.uid, {
             customProjects,
             statusMap,
