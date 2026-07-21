@@ -59,11 +59,11 @@
     font-size:1.02rem;
   }
 
-  /* Sağ üst hamburger menü butonu */
+  /* Sol üst hamburger menü butonu */
   .top-actions{
     position:fixed;
     top:22px;
-    right:22px;
+    left:22px;
     z-index:60;
   }
   .hamburger-btn{
@@ -101,7 +101,7 @@
     border:2px solid var(--surface);
   }
   @media (max-width:640px){
-    .top-actions{top:16px;right:16px;}
+    .top-actions{top:16px;left:16px;}
     .hamburger-btn{width:46px;height:46px;font-size:1.2rem;}
   }
 
@@ -123,13 +123,13 @@
   }
   .drawer-panel{
     position:fixed;
-    top:0;right:0;bottom:0;
+    top:0;left:0;bottom:0;
     width:340px;
     max-width:88vw;
     background:var(--surface);
-    border-left:1px solid var(--border);
-    box-shadow:-20px 0 60px rgba(0,0,0,.5);
-    transform:translateX(100%);
+    border-right:1px solid var(--border);
+    box-shadow:20px 0 60px rgba(0,0,0,.5);
+    transform:translateX(-100%);
     transition:transform .32s cubic-bezier(.2,.9,.3,1.1);
     display:flex;
     flex-direction:column;
@@ -481,11 +481,11 @@
     margin:0;
   }
 
-  /* Google hesap girişi: sol üst profil köşesi bu stilleri kullanır */
+  /* Google hesap girişi: sağ üst profil köşesi bu stilleri kullanır */
   .profile-corner{
     position:fixed;
     top:22px;
-    left:22px;
+    right:22px;
     z-index:60;
   }
   .auth-btn-compact{
@@ -506,7 +506,7 @@
   }
   .auth-btn-compact:hover{border-color:var(--accent-2);color:var(--accent-2);transform:translateY(-2px);}
   @media (max-width:640px){
-    .profile-corner{top:16px;left:16px;}
+    .profile-corner{top:16px;right:16px;}
     .profile-corner .auth-profile .name{max-width:90px;}
   }
   .auth-profile{
@@ -579,6 +579,21 @@
   .api-hint a{color:var(--accent-2);}
   .api-saved{font-size:.75rem;color:var(--green);margin-top:6px;height:16px;opacity:0;transition:opacity .3s ease;}
   .api-saved.show{opacity:1;}
+
+  /* Dev Araçları / README modallarındaki metin alanları */
+  .devtool-textarea{
+    width:100%;
+    font-family:'Courier New',monospace;
+    font-size:.82rem;
+    background:var(--bg-alt);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px;
+    resize:vertical;
+  }
+  .devtool-textarea:focus{outline:none;border-color:var(--accent-2);}
+  .devtool-error{color:var(--red);min-height:16px;}
 
   /* Ayarlar modalı içindeki bölümler (API key, XP, ses, veri yönetimi, tehlikeli bölge) */
   .settings-section{
@@ -1346,6 +1361,7 @@
 
 <canvas id="matrixCanvas" class="matrix-canvas"></canvas>
 <div class="secret-toast" id="secretToast">🕶️ Secret Developer Mode Unlocked!</div>
+<div class="secret-toast" id="hintToast"></div>
 <div class="level-up-toast" id="levelUpToast">
   <div class="level-up-emoji">🎉</div>
   <div class="level-up-title">Seviye Atladın!</div>
@@ -1366,15 +1382,27 @@
           <span class="nav-icon">💡</span>
           <span>Proje Önerileri</span>
         </button>
-        <button type="button" class="nav-item" data-modal-page="library">
+        <button type="button" class="nav-item" data-page="library">
           <span class="nav-icon">📚</span>
           <span>Kütüphanem</span>
           <span class="nav-count" id="libraryCount">0</span>
         </button>
-        <button type="button" class="nav-item" data-modal-page="favorites">
+        <button type="button" class="nav-item" data-page="favorites">
           <span class="nav-icon">⭐</span>
           <span>Favorilerim</span>
           <span class="nav-count" id="favoriteCount">0</span>
+        </button>
+
+        <div class="nav-divider"></div>
+        <div class="nav-section-label">Dev Araçları</div>
+
+        <button type="button" class="nav-item" data-action="devtools">
+          <span class="nav-icon">🛠️</span>
+          <span>Hızlı Dev Araçları</span>
+        </button>
+        <button type="button" class="nav-item" data-action="readme">
+          <span class="nav-icon">📄</span>
+          <span>README.md Üreteci</span>
         </button>
 
         <div class="nav-divider"></div>
@@ -1382,7 +1410,7 @@
 
         <button type="button" class="nav-item" data-action="ai">
           <span class="nav-icon">✨</span>
-          <span>AI ile Fikir Üret</span>
+          <span>AI ile Yeni Fikir Üret</span>
         </button>
         <button type="button" class="nav-item" data-action="add">
           <span class="nav-icon">➕</span>
@@ -1404,7 +1432,7 @@
     <p>Yeni bir şey inşa etmek için ilham al. Ara, filtrele, keşfet, şansına bırak ya da yapay zekaya üretsin.</p>
   </header>
 
-  <div class="daily-challenge-card" id="dailyChallengeCard" title="Günün Görevi'ni tamamla, +50 XP bonus kap">
+  <div class="daily-challenge-card explore-only" id="dailyChallengeCard" title="Günün Görevi'ni tamamla, +50 XP bonus kap">
     <div class="daily-icon">🔥</div>
     <div class="daily-info">
       <div class="daily-label">Günün Görevi</div>
@@ -1429,14 +1457,14 @@
     </div>
   </div>
 
-  <div class="random-bar">
+  <div class="random-bar explore-only">
     <button id="randomBtn">🎲 Bana Rastgele Bir Proje Ver!</button>
     <button id="wheelBtn" type="button">🎡 Kader Çarkı</button>
     <button id="aiBtn">✨ AI ile Yeni Fikir Üret</button>
   </div>
-  <div class="ai-status" id="aiStatusMsg"></div>
+  <div class="ai-status explore-only" id="aiStatusMsg"></div>
 
-  <div class="spotlight" id="spotlight"></div>
+  <div class="spotlight explore-only" id="spotlight"></div>
 
   <div class="stats-bar" id="statsBar">
     <div class="stat-card idea">
@@ -1542,21 +1570,6 @@
   </div>
 </div>
 
-<!-- 📚⭐ Kütüphanem / Favorilerim modalı -->
-<div class="modal-overlay" id="pageModalOverlay">
-  <div class="modal-box" id="pageModalBox" style="max-width:960px;">
-    <div class="modal-header">
-      <div>
-        <h2 id="pageModalTitle">📚 Kütüphanem</h2>
-        <p class="sub" id="pageModalSubtitle">Devam eden ve tamamladığın projelerin.</p>
-      </div>
-      <button class="modal-close" id="pageModalCloseBtn" type="button">×</button>
-    </div>
-    <div class="results-count" id="pageModalResultsCount"></div>
-    <div class="grid" id="pageModalGrid"></div>
-  </div>
-</div>
-
 <!-- Adım adım rehber / Yol Haritası modalı (paylaşımlı) -->
 <div class="modal-overlay" id="guideModalOverlay">
   <div class="modal-box" id="guideModalBox">
@@ -1643,6 +1656,59 @@
       <div class="settings-section-title">⚠️ Tehlikeli Bölge</div>
       <p class="api-hint" style="margin-top:0;margin-bottom:12px;">Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni, favorilerini ve XP/seviye ilerlemeni bu cihazdan siler. Bu işlem geri alınamaz.</p>
       <button type="button" class="btn-secondary danger-btn" id="resetDataBtn">🗑 Tüm Verileri Sıfırla</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🛠️ Hızlı Dev Araçları modalı -->
+<div class="modal-overlay" id="devToolsModalOverlay">
+  <div class="modal-box" style="max-width:640px;">
+    <div class="modal-header">
+      <div>
+        <h2>🛠️ Hızlı Dev Araçları</h2>
+        <p class="sub">JSON formatla, Base64 encode/decode et — hepsi tarayıcında çalışır, hiçbir şey sunucuya gönderilmez.</p>
+      </div>
+      <button class="modal-close" id="devToolsModalCloseBtn" type="button">×</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">🧩 JSON Formatter</div>
+      <textarea id="jsonToolInput" class="devtool-textarea" rows="6" placeholder='{"ornek": "buraya JSON yapıştır"}'></textarea>
+      <div class="settings-btn-row" style="margin-top:10px;">
+        <button type="button" class="btn-secondary" id="jsonFormatBtn">✨ Formatla</button>
+        <button type="button" class="btn-secondary" id="jsonMinifyBtn">📦 Minify</button>
+        <button type="button" class="btn-secondary" id="jsonCopyBtn">📋 Kopyala</button>
+      </div>
+      <p class="api-hint devtool-error" id="jsonToolMsg"></p>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">🔡 Base64 Encoder / Decoder</div>
+      <textarea id="base64ToolInput" class="devtool-textarea" rows="4" placeholder="Metin ya da Base64 yapıştır"></textarea>
+      <div class="settings-btn-row" style="margin-top:10px;">
+        <button type="button" class="btn-secondary" id="base64EncodeBtn">➡️ Encode</button>
+        <button type="button" class="btn-secondary" id="base64DecodeBtn">⬅️ Decode</button>
+        <button type="button" class="btn-secondary" id="base64CopyBtn">📋 Kopyala</button>
+      </div>
+      <p class="api-hint devtool-error" id="base64ToolMsg"></p>
+    </div>
+  </div>
+</div>
+
+<!-- 📄 README.md Üreteci modalı -->
+<div class="modal-overlay" id="readmeModalOverlay">
+  <div class="modal-box" style="max-width:720px;">
+    <div class="modal-header">
+      <div>
+        <h2 id="readmeModalTitle">📄 README.md Üreteci</h2>
+        <p class="sub">Projenin GitHub README dosyasını oluştur ve kopyala.</p>
+      </div>
+      <button class="modal-close" id="readmeModalCloseBtn" type="button">×</button>
+    </div>
+    <textarea id="readmeModalContent" class="devtool-textarea" readonly rows="18" style="font-family:'Courier New',monospace;"></textarea>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="readmeModalCancelBtn">Kapat</button>
+      <button type="button" class="btn-primary" id="readmeCopyBtn">📋 README'yi Kopyala</button>
     </div>
   </div>
 </div>
@@ -2530,6 +2596,16 @@
     }, 3000);
   }
 
+  let hintToastTimeout = null;
+  function showHintToast(text, duration){
+    const toast = document.getElementById('hintToast');
+    if(!toast) return;
+    toast.textContent = text;
+    toast.classList.add('show');
+    clearTimeout(hintToastTimeout);
+    hintToastTimeout = setTimeout(() => toast.classList.remove('show'), duration || 2600);
+  }
+
   function flashButtonFeedback(btn, text, duration){
     const original = btn.innerHTML;
     btn.innerHTML = text;
@@ -2571,6 +2647,59 @@
       ? p.features.map(f => '- ' + f).join('\n')
       : '- (özellik belirtilmedi)';
     return `Selam, bana "${p.name}" isimli projeyi yapmamda yardımcı ol. Kullanacağım teknolojiler: ${techStr}. Projenin temel özellikleri şunlar olacak:\n${featuresStr}\nBana başlangıç dosya yapısını ve temel mimariyi hazırlar mısın?`;
+  }
+
+  function buildInstallSteps(techList){
+    const lower = techList.map(t => t.toLowerCase());
+    const lines = ['git clone <repo-url>', 'cd proje-klasoru'];
+    if(lower.some(t => /node|react|next|express|vue|angular|javascript|typescript/.test(t))){
+      lines.push('npm install', 'npm run dev');
+    }else if(lower.some(t => /python|flask|django|fastapi/.test(t))){
+      lines.push('pip install -r requirements.txt', 'python main.py');
+    }else if(lower.some(t => /c#|\.net|asp\.net/.test(t))){
+      lines.push('dotnet restore', 'dotnet run');
+    }else{
+      lines.push('# Gerekli bağımlılıkları kur ve projeyi başlat');
+    }
+    return '```bash\n' + lines.join('\n') + '\n```';
+  }
+
+  function buildReadmeText(p){
+    const hours = estimateHours(p);
+    const techList = p.tech || [];
+    const techLine = techList.length ? techList.map(t => `\`${t}\``).join(' · ') : '_belirtilmedi_';
+    const featuresStr = (p.features && p.features.length)
+      ? p.features.map(f => `- [ ] ${f}`).join('\n')
+      : '- [ ] (özellik belirtilmedi)';
+    const roadmapStr = ROADMAP_STEPS.map((s, i) => `${i + 1}. ${s}`).join('\n');
+
+    return `# ${p.name}
+
+\`${p.difficulty}\` · \`${p.category}\` · ⏱️ ~${hours} Saat tahmini süre
+
+## 📖 Açıklama
+
+${p.description}
+
+## 🛠️ Kullanılan Teknolojiler
+
+${techLine}
+
+## ✅ Temel Özellikler
+
+${featuresStr}
+
+## 🚀 Kurulum
+
+${buildInstallSteps(techList)}
+
+## 🗺️ Yol Haritası
+
+${roadmapStr}
+
+---
+Bu README, [Proje Fikri Bulucu](https://ardasoftwarestudio.github.io/projectrepo/index.html) ile otomatik oluşturulmuştur.
+`;
   }
 
   const grid = document.getElementById('grid');
@@ -2681,6 +2810,7 @@
         <div class="card-actions">
           <button type="button" class="btn-secondary copy-prompt-btn" data-copy-id="${p.id}">🤖 Prompt'u Kopyala</button>
           <button type="button" class="btn-secondary roadmap-btn" data-roadmap-id="${p.id}">🗺️ Yol Haritası</button>
+          <button type="button" class="btn-secondary readme-btn" data-readme-id="${p.id}">📄 README Oluştur</button>
           ${showGuideButton ? `<button type="button" class="btn-primary guide-btn" data-guide-id="${p.id}">🚀 Adım Adım Başla</button>` : ''}
         </div>
       </div>
@@ -2802,6 +2932,16 @@
       });
     });
 
+    root.querySelectorAll('.readme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idAttr = btn.getAttribute('data-readme-id');
+        const numericId = Number(idAttr);
+        const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
+        const project = getAllProjects().find(p => String(p.id) === String(realId));
+        if(project) openReadmeModal(project);
+      });
+    });
+
     root.querySelectorAll('.copy-prompt-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const idAttr = btn.getAttribute('data-copy-id');
@@ -2838,6 +2978,10 @@
     document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-page') === state.page);
     });
+    const isExplorePage = state.page === 'suggestions';
+    document.querySelectorAll('.explore-only').forEach(el => {
+      el.style.display = isExplorePage ? '' : 'none';
+    });
   }
 
   function render(){
@@ -2854,61 +2998,22 @@
     resultsCount.textContent = `${list.length} proje bulundu`;
 
     if(list.length === 0){
-      grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">🎉 Bu filtrelere uyan tüm önerileri zaten kütüphanene eklemişsin! Yeni fikir için 🎲 ya da ✨ AI butonunu dene, ya da filtreleri değiştir.</div>`;
-    }else{
-      grid.innerHTML = list.map(p => cardHTML(p, false, null, false)).join('');
-      attachCardHandlers(grid);
-    }
-
-    if(currentModalPage && pageModalOverlay.classList.contains('show')){
-      renderPageModalGrid(currentModalPage);
-    }
-  }
-
-  // ---- 📚⭐ Kütüphanem / Favorilerim modalı ----
-  const pageModalOverlay = document.getElementById('pageModalOverlay');
-  const pageModalCloseBtn = document.getElementById('pageModalCloseBtn');
-  const pageModalGrid = document.getElementById('pageModalGrid');
-  const pageModalResultsCount = document.getElementById('pageModalResultsCount');
-  let currentModalPage = null;
-
-  function renderPageModalGrid(page){
-    const list = filteredProjects(page);
-    pageModalResultsCount.textContent = `${list.length} proje bulundu`;
-
-    if(list.length === 0){
-      const msg = page === 'library'
-        ? '📌 Kütüphanende henüz proje yok. Proje Önerileri sayfasındaki ➕ butonuna tıklayarak fikir kaydedebilirsin.'
-        : '⭐ Henüz favori işaretlediğin bir proje yok. Beğendiğin kartlardaki ☆ butonuna tıklayarak favorilerine ekleyebilirsin.';
-      pageModalGrid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${msg}</div>`;
+      let msg;
+      if(state.page === 'library'){
+        msg = '📌 Kütüphanende henüz proje yok. Proje Önerileri sayfasındaki ➕ butonuna tıklayarak fikir kaydedebilirsin.';
+      }else if(state.page === 'favorites'){
+        msg = '⭐ Henüz favori işaretlediğin bir proje yok. Beğendiğin kartlardaki ☆ butonuna tıklayarak favorilerine ekleyebilirsin.';
+      }else{
+        msg = '🎉 Bu filtrelere uyan tüm önerileri zaten kütüphanene eklemişsin! Yeni fikir için 🎲 ya da ✨ AI butonunu dene, ya da filtreleri değiştir.';
+      }
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${msg}</div>`;
       return;
     }
 
-    const showGuideButton = page === 'library';
-    pageModalGrid.innerHTML = list.map(p => cardHTML(p, false, null, showGuideButton)).join('');
-    attachCardHandlers(pageModalGrid);
+    const showGuideButton = state.page === 'library';
+    grid.innerHTML = list.map(p => cardHTML(p, false, null, showGuideButton)).join('');
+    attachCardHandlers(grid);
   }
-
-  function openPageModal(page){
-    currentModalPage = page;
-    const meta = PAGE_META[page];
-    document.getElementById('pageModalTitle').textContent = `${meta.icon} ${meta.title}`;
-    document.getElementById('pageModalSubtitle').textContent = meta.subtitle;
-    document.querySelectorAll('.nav-item[data-modal-page]').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-modal-page') === page);
-    });
-    renderPageModalGrid(page);
-    pageModalOverlay.classList.add('show');
-  }
-  function closePageModal(){
-    pageModalOverlay.classList.remove('show');
-    currentModalPage = null;
-    document.querySelectorAll('.nav-item[data-modal-page]').forEach(btn => btn.classList.remove('active'));
-  }
-  pageModalCloseBtn.addEventListener('click', closePageModal);
-  pageModalOverlay.addEventListener('click', (e) => {
-    if(e.target === pageModalOverlay) closePageModal();
-  });
 
   // ---- Navigasyon menüsü (sayfa geçişleri ve eylemler) ----
   const navList = document.getElementById('navList');
@@ -2917,15 +3022,8 @@
     if(pageBtn){
       state.page = pageBtn.getAttribute('data-page');
       closeDrawer();
-      closePageModal();
       render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    const modalPageBtn = e.target.closest('.nav-item[data-modal-page]');
-    if(modalPageBtn){
-      closeDrawer();
-      openPageModal(modalPageBtn.getAttribute('data-modal-page'));
       return;
     }
     const actionBtn = e.target.closest('.nav-item[data-action]');
@@ -2940,6 +3038,15 @@
         openModal();
       }else if(action === 'settings'){
         openSettingsModal();
+      }else if(action === 'devtools'){
+        openDevToolsModal();
+      }else if(action === 'readme'){
+        if(state.page !== 'suggestions'){
+          state.page = 'suggestions';
+          render();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showHintToast('📄 Bir proje kartındaki "README Oluştur" butonuna tıkla');
       }
     }
   });
@@ -3106,6 +3213,7 @@
       <ol class="guide-steps">${stepsHTML}</ol>
       <div class="modal-actions">
         <button type="button" class="btn-secondary roadmap-copy-btn" data-copy-id="${p.id}">🤖 Prompt Kopyala</button>
+        <button type="button" class="btn-secondary roadmap-readme-btn" data-readme-id="${p.id}">📄 README Oluştur</button>
         <button type="button" class="btn-primary" id="guideModalDoneBtn">Kapat</button>
       </div>
     `;
@@ -3123,6 +3231,10 @@
         const ok = await copyToClipboard(buildPromptText(p));
         flashButtonFeedback(copyBtn, ok ? '✓ Kopyalandı!' : '⚠️ Kopyalanamadı', 1600);
       });
+    }
+    const readmeBtn = guideModalBox.querySelector('.roadmap-readme-btn');
+    if(readmeBtn){
+      readmeBtn.addEventListener('click', () => openReadmeModal(p));
     }
   }
 
@@ -3291,6 +3403,111 @@
     if(e.target === settingsModalOverlay) closeSettingsModal();
   });
 
+  // ---- 🛠️ Hızlı Dev Araçları modalı (JSON Formatter + Base64) ----
+  const devToolsModalOverlay = document.getElementById('devToolsModalOverlay');
+  const devToolsModalCloseBtn = document.getElementById('devToolsModalCloseBtn');
+  const jsonToolInput = document.getElementById('jsonToolInput');
+  const jsonToolMsg = document.getElementById('jsonToolMsg');
+  const base64ToolInput = document.getElementById('base64ToolInput');
+  const base64ToolMsg = document.getElementById('base64ToolMsg');
+
+  function openDevToolsModal(){
+    jsonToolMsg.textContent = '';
+    base64ToolMsg.textContent = '';
+    devToolsModalOverlay.classList.add('show');
+  }
+  function closeDevToolsModal(){
+    devToolsModalOverlay.classList.remove('show');
+  }
+  devToolsModalCloseBtn.addEventListener('click', closeDevToolsModal);
+  devToolsModalOverlay.addEventListener('click', (e) => {
+    if(e.target === devToolsModalOverlay) closeDevToolsModal();
+  });
+
+  document.getElementById('jsonFormatBtn').addEventListener('click', () => {
+    try{
+      jsonToolInput.value = JSON.stringify(JSON.parse(jsonToolInput.value), null, 2);
+      jsonToolMsg.textContent = '✓ JSON geçerli ve formatlandı.';
+      jsonToolMsg.style.color = 'var(--green)';
+    }catch(err){
+      jsonToolMsg.textContent = '⚠️ Geçersiz JSON: ' + err.message;
+      jsonToolMsg.style.color = 'var(--red)';
+    }
+  });
+  document.getElementById('jsonMinifyBtn').addEventListener('click', () => {
+    try{
+      jsonToolInput.value = JSON.stringify(JSON.parse(jsonToolInput.value));
+      jsonToolMsg.textContent = '✓ JSON sıkıştırıldı.';
+      jsonToolMsg.style.color = 'var(--green)';
+    }catch(err){
+      jsonToolMsg.textContent = '⚠️ Geçersiz JSON: ' + err.message;
+      jsonToolMsg.style.color = 'var(--red)';
+    }
+  });
+  const jsonCopyBtn = document.getElementById('jsonCopyBtn');
+  jsonCopyBtn.addEventListener('click', async () => {
+    const ok = await copyToClipboard(jsonToolInput.value);
+    flashButtonFeedback(jsonCopyBtn, ok ? '✓ Kopyalandı!' : '⚠️ Kopyalanamadı', 1600);
+  });
+
+  function encodeBase64Unicode(str){
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16))));
+  }
+  function decodeBase64Unicode(str){
+    return decodeURIComponent(Array.prototype.map.call(atob(str), c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''));
+  }
+
+  document.getElementById('base64EncodeBtn').addEventListener('click', () => {
+    try{
+      base64ToolInput.value = encodeBase64Unicode(base64ToolInput.value);
+      base64ToolMsg.textContent = '✓ Encode edildi.';
+      base64ToolMsg.style.color = 'var(--green)';
+    }catch(err){
+      base64ToolMsg.textContent = '⚠️ Encode edilemedi: ' + err.message;
+      base64ToolMsg.style.color = 'var(--red)';
+    }
+  });
+  document.getElementById('base64DecodeBtn').addEventListener('click', () => {
+    try{
+      base64ToolInput.value = decodeBase64Unicode(base64ToolInput.value.trim());
+      base64ToolMsg.textContent = '✓ Decode edildi.';
+      base64ToolMsg.style.color = 'var(--green)';
+    }catch(err){
+      base64ToolMsg.textContent = '⚠️ Geçerli bir Base64 metni değil.';
+      base64ToolMsg.style.color = 'var(--red)';
+    }
+  });
+  const base64CopyBtn = document.getElementById('base64CopyBtn');
+  base64CopyBtn.addEventListener('click', async () => {
+    const ok = await copyToClipboard(base64ToolInput.value);
+    flashButtonFeedback(base64CopyBtn, ok ? '✓ Kopyalandı!' : '⚠️ Kopyalanamadı', 1600);
+  });
+
+  // ---- 📄 README.md Üreteci modalı ----
+  const readmeModalOverlay = document.getElementById('readmeModalOverlay');
+  const readmeModalCloseBtn = document.getElementById('readmeModalCloseBtn');
+  const readmeModalCancelBtn = document.getElementById('readmeModalCancelBtn');
+  const readmeModalContent = document.getElementById('readmeModalContent');
+  const readmeCopyBtn = document.getElementById('readmeCopyBtn');
+
+  function openReadmeModal(p){
+    document.getElementById('readmeModalTitle').textContent = `📄 ${p.name} — README.md`;
+    readmeModalContent.value = buildReadmeText(p);
+    readmeModalOverlay.classList.add('show');
+  }
+  function closeReadmeModal(){
+    readmeModalOverlay.classList.remove('show');
+  }
+  readmeModalCloseBtn.addEventListener('click', closeReadmeModal);
+  readmeModalCancelBtn.addEventListener('click', closeReadmeModal);
+  readmeModalOverlay.addEventListener('click', (e) => {
+    if(e.target === readmeModalOverlay) closeReadmeModal();
+  });
+  readmeCopyBtn.addEventListener('click', async () => {
+    const ok = await copyToClipboard(readmeModalContent.value);
+    flashButtonFeedback(readmeCopyBtn, ok ? '✓ Kopyalandı!' : '⚠️ Kopyalanamadı', 1600);
+  });
+
   resetDataBtn.addEventListener('click', () => {
     if(!confirm('Tüm özel/AI fikirlerini, durum işaretlerini, kütüphaneni, favorilerini ve XP/seviye ilerlemeni bu cihazdan silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
     customProjects = [];
@@ -3317,7 +3534,8 @@
       if(guideModalOverlay.classList.contains('show')) closeGuideModal();
       if(wheelModalOverlay.classList.contains('show')) closeWheelModal();
       if(settingsModalOverlay.classList.contains('show')) closeSettingsModal();
-      if(pageModalOverlay.classList.contains('show')) closePageModal();
+      if(devToolsModalOverlay.classList.contains('show')) closeDevToolsModal();
+      if(readmeModalOverlay.classList.contains('show')) closeReadmeModal();
       if(drawerOverlay.classList.contains('show')) closeDrawer();
     }
   });
