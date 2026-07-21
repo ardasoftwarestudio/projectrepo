@@ -534,6 +534,65 @@
   .danger-btn{border-color:rgba(248,81,73,.4);color:var(--red);}
   .danger-btn:hover{background:rgba(248,81,73,.12);border-color:var(--red);color:var(--red);}
 
+  /* Günün Görevi (Daily Challenge) kartı */
+  .daily-challenge-card{
+    max-width:560px;
+    margin:0 auto 22px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:linear-gradient(135deg, rgba(248,81,73,.12), rgba(227,179,65,.1));
+    border:1px solid rgba(248,81,73,.35);
+    border-radius:16px;
+    padding:14px 18px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .daily-challenge-card:hover{
+    transform:translateY(-2px);
+    border-color:var(--red);
+    box-shadow:0 12px 28px rgba(248,81,73,.2);
+  }
+  .daily-challenge-card.claimed{
+    border-color:rgba(63,185,80,.4);
+    background:linear-gradient(135deg, rgba(63,185,80,.1), rgba(34,211,238,.08));
+  }
+  .daily-icon{font-size:1.8rem;flex:0 0 auto;}
+  .daily-info{flex:1;min-width:0;}
+  .daily-label{
+    font-size:.68rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--text-dim);
+    font-weight:700;
+  }
+  .daily-name{
+    font-weight:700;
+    font-size:.95rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .daily-bonus{
+    font-size:.75rem;
+    font-weight:800;
+    color:var(--yellow);
+    background:rgba(227,179,65,.15);
+    border:1px solid rgba(227,179,65,.35);
+    padding:5px 10px;
+    border-radius:999px;
+    flex:0 0 auto;
+    white-space:nowrap;
+  }
+  .daily-challenge-card.claimed .daily-bonus{
+    color:var(--green);
+    background:rgba(63,185,80,.15);
+    border-color:rgba(63,185,80,.35);
+  }
+  @media (max-width:520px){
+    .daily-name{max-width:150px;}
+  }
+
   .random-bar{
     display:flex;
     flex-wrap:wrap;
@@ -562,6 +621,23 @@
     background-position:100% 0;
   }
   #randomBtn:active{transform:translateY(0px) scale(.98);}
+
+  #wheelBtn{
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    border:1px solid rgba(244,114,182,.5);
+    color:var(--text);
+    font-weight:700;
+    font-size:1.02rem;
+    padding:15px 30px;
+    border-radius:999px;
+    background:linear-gradient(135deg, rgba(244,114,182,.28), rgba(227,179,65,.22));
+    box-shadow:0 10px 26px rgba(244,114,182,.22);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  #wheelBtn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(244,114,182,.32);}
+  #wheelBtn:active{transform:translateY(0) scale(.98);}
 
   #aiBtn{
     position:relative;
@@ -805,6 +881,20 @@
   .badge.ai{background:rgba(34,211,238,.15);color:var(--accent-2);border:1px solid rgba(34,211,238,.35);}
 
   .desc{color:var(--text-dim);font-size:.92rem;line-height:1.55;margin:0;}
+
+  .time-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:.78rem;
+    font-weight:600;
+    color:var(--accent-2);
+    background:rgba(34,211,238,.1);
+    border:1px solid rgba(34,211,238,.25);
+    padding:5px 12px;
+    border-radius:999px;
+    width:fit-content;
+  }
 
   .section-title{
     font-size:.72rem;
@@ -1169,6 +1259,39 @@
   .guide-step.done .step-text{text-decoration:line-through;}
   .guide-step-empty{color:var(--text-dim);font-size:.88rem;padding:10px 0;}
 
+  /* 🎡 Kader Çarkı modalı */
+  .wheel-wrap{
+    position:relative;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin:10px 0 18px;
+  }
+  #wheelCanvas{
+    border-radius:50%;
+    transition:transform 4s cubic-bezier(.17,.67,.16,.99);
+    box-shadow:0 0 0 6px var(--bg-alt), 0 0 0 8px var(--border), 0 20px 50px rgba(0,0,0,.4);
+    max-width:100%;
+  }
+  .wheel-pointer{
+    position:absolute;
+    top:-8px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:1.8rem;
+    color:var(--accent-3);
+    z-index:5;
+    filter:drop-shadow(0 0 6px rgba(244,114,182,.6));
+  }
+  .wheel-result{
+    text-align:center;
+    min-height:26px;
+    font-weight:700;
+    font-size:.95rem;
+    color:var(--text);
+    margin-bottom:6px;
+  }
+
   @media (max-width:520px){
     header h1{font-size:1.7rem;}
     .filters{padding:16px;}
@@ -1269,6 +1392,15 @@
     <p>Yeni bir şey inşa etmek için ilham al. Ara, filtrele, keşfet, şansına bırak ya da yapay zekaya üretsin.</p>
   </header>
 
+  <div class="daily-challenge-card" id="dailyChallengeCard" title="Günün Görevi'ni tamamla, +50 XP bonus kap">
+    <div class="daily-icon">🔥</div>
+    <div class="daily-info">
+      <div class="daily-label">Günün Görevi</div>
+      <div class="daily-name" id="dailyChallengeName">Yükleniyor...</div>
+    </div>
+    <div class="daily-bonus" id="dailyChallengeBonus">+50 XP Bonus</div>
+  </div>
+
   <div class="xp-bar-wrap" id="xpBarWrap">
     <div class="xp-level-badge">
       <span class="xp-level-num" id="xpLevelNum">1</span>
@@ -1287,6 +1419,7 @@
 
   <div class="random-bar">
     <button id="randomBtn">🎲 Bana Rastgele Bir Proje Ver!</button>
+    <button id="wheelBtn" type="button">🎡 Kader Çarkı</button>
     <button id="aiBtn">✨ AI ile Yeni Fikir Üret</button>
   </div>
   <div class="ai-status" id="aiStatusMsg"></div>
@@ -1402,6 +1535,27 @@
 <div class="modal-overlay" id="guideModalOverlay">
   <div class="modal-box" id="guideModalBox">
     <!-- JS tarafından doldurulur -->
+  </div>
+</div>
+
+<!-- 🎡 Kader Çarkı modalı -->
+<div class="modal-overlay" id="wheelModalOverlay">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-header">
+      <div>
+        <h2>🎡 Kader Çarkı</h2>
+        <p class="sub">Filtrelenmiş projelerin arasından kader hangisini seçecek?</p>
+      </div>
+      <button class="modal-close" id="wheelModalCloseBtn" type="button">×</button>
+    </div>
+    <div class="wheel-wrap">
+      <div class="wheel-pointer">▼</div>
+      <canvas id="wheelCanvas" width="340" height="340"></canvas>
+    </div>
+    <div class="wheel-result" id="wheelResult"></div>
+    <div class="modal-actions" style="justify-content:center;">
+      <button type="button" class="btn-primary" id="wheelSpinBtn">🎡 Çarkı Çevir</button>
+    </div>
   </div>
 </div>
 
@@ -1741,6 +1895,7 @@
   const LS_XP = 'pfb_xp_v1';
   const LS_XP_AWARDED = 'pfb_xp_awarded_ids_v1';
   const LS_MUTED = 'pfb_muted_v1';
+  const LS_DAILY = 'pfb_daily_challenge_v1';
 
   const STATUS_OPTIONS = ['Fikir Aşamasında', 'Devam Ediyor', 'Tamamlandı'];
   const STATUS_CLASS = {
@@ -1758,8 +1913,12 @@
     "Test, Optimizasyon ve Yayına Alma (Deploy)"
   ];
 
+  // 🎡 Kader Çarkı dilim renkleri
+  const WHEEL_COLORS = ['#7c5cff', '#22d3ee', '#f472b6', '#3fb950', '#e3b341', '#f85149', '#8b5cf6', '#06b6d4'];
+
   // ---- Gamification (XP / Seviye) sabitleri ----
   const XP_REWARDS = { 'Başlangıç': 50, 'Orta': 100, 'İleri': 200 };
+  const DAILY_BONUS_XP = 50;
   const LEVEL_TITLES = [
     { min: 1, title: "🌱 Junior Coder" },
     { min: 3, title: "💻 Code Apprentice" },
@@ -1848,6 +2007,15 @@
   function setMuted(val){
     localStorage.setItem(LS_MUTED, val ? '1' : '0');
   }
+  function loadDailyChallengeState(){
+    try{
+      const raw = localStorage.getItem(LS_DAILY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function saveDailyChallengeState(st){
+    localStorage.setItem(LS_DAILY, JSON.stringify(st));
+  }
 
   let customProjects = loadCustomProjects();
   let statusMap = loadStatusMap();
@@ -1869,6 +2037,44 @@
   }
   function isFavorite(id){
     return favoriteIds.has(String(id));
+  }
+
+  // ---- ⏱️ Tahmini süre hesaplama (zorluk + teknoloji + özellik sayısına göre) ----
+  function estimateHours(p){
+    const diffBase = { 'Başlangıç': 4, 'Orta': 10, 'İleri': 20 };
+    const base = diffBase[p.difficulty] || 8;
+    const techFactor = (p.tech || []).length * 1.5;
+    const featFactor = (p.features || []).length * 2;
+    return Math.max(1, Math.round(base + techFactor + featFactor));
+  }
+
+  // ---- 🔥 Günün Görevi (Daily Challenge): tarihe göre deterministik proje seçimi ----
+  function getDailyChallengeProject(){
+    const today = new Date();
+    const dateKey = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    let hash = 0;
+    for(let i = 0; i < dateKey.length; i++){
+      hash = (hash * 31 + dateKey.charCodeAt(i)) >>> 0;
+    }
+    const idx = hash % BUILT_IN_PROJECTS.length;
+    return { dateKey, project: BUILT_IN_PROJECTS[idx] };
+  }
+
+  const dailyChallenge = getDailyChallengeProject();
+  let dailyState = loadDailyChallengeState();
+  if(!dailyState || dailyState.dateKey !== dailyChallenge.dateKey){
+    dailyState = { dateKey: dailyChallenge.dateKey, bonusAwarded: false };
+    saveDailyChallengeState(dailyState);
+  }
+
+  function updateDailyChallengeUI(){
+    const card = document.getElementById('dailyChallengeCard');
+    const nameEl = document.getElementById('dailyChallengeName');
+    const bonusEl = document.getElementById('dailyChallengeBonus');
+    if(!card) return;
+    nameEl.textContent = dailyChallenge.project.name;
+    card.classList.toggle('claimed', !!dailyState.bonusAwarded);
+    bonusEl.textContent = dailyState.bonusAwarded ? '✅ Bonus Alındı' : ('+' + DAILY_BONUS_XP + ' XP Bonus');
   }
 
   // ---- Bulut senkronizasyonu (giriş yapılmışsa) ----
@@ -2074,6 +2280,7 @@
       const diff = project ? project.difficulty : 'Orta';
       sum += XP_REWARDS[diff] || 0;
     });
+    if(dailyState.bonusAwarded) sum += DAILY_BONUS_XP;
     totalXp = sum;
     persistXp();
   }
@@ -2082,21 +2289,32 @@
     fireConfetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
 
     const key = String(id);
+    const beforeLevel = computeLevelInfo(totalXp).level;
+    let gained = 0;
+
     if(!xpAwardedIds.has(key)){
       xpAwardedIds.add(key);
       persistXpAwarded();
-
       const project = getAllProjects().find(p => String(p.id) === key);
       const diff = project ? project.difficulty : 'Orta';
-      const xpGain = XP_REWARDS[diff] || 100;
-      const beforeLevel = computeLevelInfo(totalXp).level;
+      gained += XP_REWARDS[diff] || 100;
+    }
 
-      totalXp += xpGain;
+    // 🔥 Günün Görevi bonusu: bugünün görevi tamamlandıysa ve bonus daha önce alınmadıysa.
+    if(String(dailyChallenge.project.id) === key && !dailyState.bonusAwarded){
+      dailyState.bonusAwarded = true;
+      saveDailyChallengeState(dailyState);
+      gained += DAILY_BONUS_XP;
+      updateDailyChallengeUI();
+    }
+
+    if(gained > 0){
+      totalXp += gained;
       persistXp();
 
       const afterInfo = computeLevelInfo(totalXp);
       updateXpUI();
-      showXpToast('+' + xpGain + ' XP');
+      showXpToast('+' + gained + ' XP');
 
       if(afterInfo.level > beforeLevel){
         setTimeout(() => {
@@ -2354,6 +2572,7 @@
     const bookmarkHTML = `<button class="bookmark-btn ${saved ? 'saved' : ''}" data-bookmark-id="${p.id}" title="${saved ? 'Kütüphaneden çıkar' : 'Kütüphaneye ekle'}">${saved ? '🔖' : '➕'}</button>`;
     const fav = isFavorite(p.id);
     const favoriteHTML = `<button class="favorite-btn ${fav ? 'active' : ''}" data-favorite-id="${p.id}" title="${fav ? 'Favorilerden çıkar' : 'Favorilere ekle'}">${fav ? '⭐' : '☆'}</button>`;
+    const hours = estimateHours(p);
 
     return `
       <div class="card" data-id="${p.id}">
@@ -2370,6 +2589,7 @@
           </div>
         </div>
         <p class="desc">${p.description}</p>
+        <div class="time-badge">⏱️ Tahmini Süre: ~${hours} Saat</div>
         <div class="status-row">
           <span class="status-label">Durum:</span>
           <select class="status-select ${STATUS_CLASS[currentStatus]}" data-status-id="${p.id}">
@@ -2454,8 +2674,6 @@
         const numericId = Number(idAttr);
         const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
         toggleLibrary(realId);
-        // Hem "Öneriler" hem "Kütüphanem" görünümü kütüphane durumuna göre
-        // filtrelendiği için her iki durumda da listeyi yeniden çizmemiz gerekiyor.
         render();
       });
     });
@@ -2466,8 +2684,6 @@
         const numericId = Number(idAttr);
         const realId = (isNaN(numericId) || String(numericId) !== idAttr) ? idAttr : numericId;
         toggleFavorite(realId);
-        // "Favorilerim" görünümü favori durumuna göre filtrelendiği için
-        // listeyi yeniden çizmemiz gerekiyor.
         render();
       });
     });
@@ -2548,6 +2764,7 @@
     updateFavoriteCountUI();
     updateStatsUI();
     updateXpUI();
+    updateDailyChallengeUI();
 
     const list = filteredProjects();
     resultsCount.textContent = `${list.length} proje bulundu`;
@@ -2577,6 +2794,11 @@
     state.view = btn.getAttribute('data-view');
     viewToggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
     render();
+  });
+
+  // ---- Günün Görevi kartına tıklama -> Yol Haritası modalı ----
+  document.getElementById('dailyChallengeCard').addEventListener('click', () => {
+    openRoadmapModal(dailyChallenge.project);
   });
 
   // ---- Arama ----
@@ -2712,6 +2934,7 @@
   // ---- 🗺️ Yol Haritası modalı (standart 4 adımlı yazılım geliştirme süreci) ----
   function openRoadmapModal(p){
     const tagsHTML = (p.tech || []).map(t => `<span class="tag">${t}</span>`).join('');
+    const hours = estimateHours(p);
     const stepsHTML = ROADMAP_STEPS.map((step, i) => `
       <li class="guide-step" data-step-idx="${i}">
         <span class="step-num">${i + 1}</span>
@@ -2731,6 +2954,7 @@
         <span class="badge diff-${p.difficulty}">${p.difficulty}</span>
         <span class="badge cat">${p.category}</span>
       </div>
+      <div class="time-badge" style="margin-bottom:16px;">⏱️ Tahmini Süre: ~${hours} Saat</div>
       ${tagsHTML ? `
       <div style="margin-bottom:18px;">
         <div class="section-title">Teknolojiler</div>
@@ -2765,6 +2989,114 @@
   }
   guideModalOverlay.addEventListener('click', (e) => {
     if(e.target === guideModalOverlay) closeGuideModal();
+  });
+
+  // ---- 🎡 Kader Çarkı modalı ----
+  const wheelModalOverlay = document.getElementById('wheelModalOverlay');
+  const wheelCanvas = document.getElementById('wheelCanvas');
+  const wheelSpinBtn = document.getElementById('wheelSpinBtn');
+  const wheelResultEl = document.getElementById('wheelResult');
+  const wheelModalCloseBtn = document.getElementById('wheelModalCloseBtn');
+  const wheelBtn = document.getElementById('wheelBtn');
+
+  let wheelProjects = [];
+  let wheelCurrentRotation = 0;
+  let wheelSpinning = false;
+
+  function drawWheel(projects){
+    if(!wheelCanvas) return;
+    const ctx = wheelCanvas.getContext('2d');
+    const size = wheelCanvas.width;
+    const radius = size / 2;
+    const n = projects.length;
+    if(n === 0){
+      ctx.clearRect(0, 0, size, size);
+      return;
+    }
+    const sliceAngle = (Math.PI * 2) / n;
+    ctx.clearRect(0, 0, size, size);
+    projects.forEach((p, i) => {
+      const start = i * sliceAngle;
+      const end = start + sliceAngle;
+      ctx.beginPath();
+      ctx.moveTo(radius, radius);
+      ctx.arc(radius, radius, radius - 2, start, end);
+      ctx.closePath();
+      ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+      ctx.fill();
+      ctx.save();
+      ctx.translate(radius, radius);
+      ctx.rotate(start + sliceAngle / 2);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#0b0d12';
+      ctx.font = 'bold 12px Segoe UI, sans-serif';
+      const label = p.name.length > 16 ? p.name.slice(0, 15) + '…' : p.name;
+      ctx.fillText(label, radius - 16, 4);
+      ctx.restore();
+    });
+  }
+
+  function openWheelModal(){
+    wheelProjects = filteredProjects().length ? filteredProjects() : getAllProjects();
+    if(wheelProjects.length > 12) wheelProjects = wheelProjects.slice(0, 12);
+    wheelCurrentRotation = 0;
+    wheelCanvas.style.transition = 'none';
+    wheelCanvas.style.transform = 'rotate(0deg)';
+    wheelResultEl.textContent = '';
+    drawWheel(wheelProjects);
+    wheelModalOverlay.classList.add('show');
+    // Bir sonraki animasyon karesinde transition'ı geri aç (anlık sıfırlamanın animasyonsuz olması için).
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        wheelCanvas.style.transition = 'transform 4s cubic-bezier(.17,.67,.16,.99)';
+      });
+    });
+  }
+  function closeWheelModal(){
+    wheelModalOverlay.classList.remove('show');
+  }
+  wheelBtn.addEventListener('click', openWheelModal);
+  wheelModalCloseBtn.addEventListener('click', closeWheelModal);
+  wheelModalOverlay.addEventListener('click', (e) => {
+    if(e.target === wheelModalOverlay) closeWheelModal();
+  });
+
+  wheelSpinBtn.addEventListener('click', () => {
+    if(wheelSpinning || !wheelProjects.length) return;
+    wheelSpinning = true;
+    wheelResultEl.textContent = '';
+    playSpinSound();
+
+    const n = wheelProjects.length;
+    const sliceDeg = 360 / n;
+    const targetIndex = Math.floor(Math.random() * n);
+    const targetSliceCenter = targetIndex * sliceDeg + sliceDeg / 2;
+    const extraSpins = 5 + Math.floor(Math.random() * 3);
+    const finalRotation = wheelCurrentRotation - (wheelCurrentRotation % 360) + extraSpins * 360 + (360 - targetSliceCenter);
+
+    wheelCanvas.style.transition = 'transform 4s cubic-bezier(.17,.67,.16,.99)';
+    wheelCanvas.style.transform = `rotate(${finalRotation}deg)`;
+    wheelCurrentRotation = finalRotation;
+
+    const onEnd = () => {
+      wheelCanvas.removeEventListener('transitionend', onEnd);
+      wheelSpinning = false;
+      const winner = wheelProjects[targetIndex];
+      fireBigConfetti();
+      playVictorySound();
+      wheelResultEl.innerHTML = `🎉 Kazanan: <strong>${winner.name}</strong>`;
+      setTimeout(() => {
+        closeWheelModal();
+        spotlight.classList.add('show');
+        spotlight.innerHTML = cardHTML(winner, true, '🎡 Kader Çarkı Seçti');
+        const cardEl = spotlight.querySelector('.card');
+        cardEl.classList.add('shuffling');
+        attachCardHandlers(spotlight);
+        setTimeout(() => cardEl.classList.remove('shuffling'), 460);
+        spotlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 1400);
+    };
+    wheelCanvas.addEventListener('transitionend', onEnd);
   });
 
   // ---- Hamburger Menü / Kontrol & Ayarlar Paneli (Drawer) ----
@@ -2810,6 +3142,8 @@
     favoriteIds = new Set();
     totalXp = 0;
     xpAwardedIds = new Set();
+    dailyState = { dateKey: dailyChallenge.dateKey, bonusAwarded: false };
+    saveDailyChallengeState(dailyState);
     persistCustomProjects();
     persistStatusMap();
     persistLibrary();
@@ -2824,6 +3158,7 @@
     if(e.key === 'Escape'){
       if(modalOverlay.classList.contains('show')) closeModal();
       if(guideModalOverlay.classList.contains('show')) closeGuideModal();
+      if(wheelModalOverlay.classList.contains('show')) closeWheelModal();
       if(drawerOverlay.classList.contains('show')) closeDrawer();
     }
   });
